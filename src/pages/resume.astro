@@ -1,0 +1,146 @@
+---
+import Layout from '../layouts/Layout.astro';
+import resumePdf from '../assets/resume/SiddhantDembi.pdf';
+import resumePreview from '../assets/resume/SiddhantDembi.png';
+---
+
+<Layout
+  title="Resume — Siddhant Dembi"
+  description="Resume for Siddhant Dembi, viewable directly within the site."
+>
+  <main class="resume-page">
+    <section class="resume-header">
+      <p class="eyebrow">RESUME</p>
+      <h1>Siddhant Dembi</h1>
+    </section>
+
+    <section class="resume-viewer">
+      <iframe src={`${resumePdf}#view=FitH`} title="Siddhant Dembi Resume"></iframe>
+      <img class="resume-image" src={resumePreview.src} alt="Siddhant Dembi resume preview" />
+    </section>
+
+    <div class="resume-actions">
+      <a class="download-button desktop-download" href={resumePdf} download="SiddhantDembi.pdf">
+        Download Resume
+      </a>
+      <a class="download-button mobile-open" href={resumePdf} target="_blank" rel="noreferrer">
+        Open Resume PDF
+      </a>
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .resume-page {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 56px 24px 32px;
+  }
+
+  .resume-header {
+    margin-bottom: 28px;
+  }
+
+  .eyebrow {
+    margin: 0 0 14px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: #666;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(2.4rem, 6vw, 4.5rem);
+    line-height: 1;
+    letter-spacing: -0.04em;
+  }
+
+  .resume-viewer {
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #f8f8f8;
+  }
+
+  .resume-viewer iframe {
+    display: block;
+    width: 100%;
+    height: calc(100vh - 210px);
+    min-height: 900px;
+    border: 0;
+    background: white;
+  }
+
+  .resume-image {
+    display: none;
+    width: 100%;
+    height: auto;
+    background: white;
+  }
+
+  .resume-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 24px;
+    padding-bottom: 12px;
+  }
+
+  .download-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 0 22px;
+    border: 1px solid #111;
+    border-radius: 999px;
+    color: #111;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition:
+      background 0.2s ease,
+      color 0.2s ease;
+  }
+
+  .download-button:hover {
+    background: #111;
+    color: #fff;
+  }
+
+  .mobile-open {
+    display: none;
+  }
+
+  @media (max-width: 800px) {
+    .resume-page {
+      padding: 40px 20px 24px;
+    }
+
+    .resume-viewer iframe {
+      display: none;
+    }
+
+    .resume-image {
+      display: block;
+    }
+
+    .resume-actions {
+      margin-top: 20px;
+      padding-bottom: 0;
+    }
+
+    .download-button {
+      width: 100%;
+      min-height: 48px;
+    }
+
+    .desktop-download {
+      display: none;
+    }
+
+    .mobile-open {
+      display: inline-flex;
+    }
+  }
+</style>

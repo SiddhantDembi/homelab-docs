@@ -1,5 +1,17 @@
 ---
+import { getCollection } from 'astro:content';
 import Layout from '../layouts/Layout.astro';
+import {
+  getPublishedDocs,
+  getSectionDescription,
+  getSectionTitle,
+  getSectionUrl,
+  groupDocsBySection,
+} from '../lib/docs';
+
+const docs = getPublishedDocs(await getCollection('docs'));
+const groupedDocs = groupDocsBySection(docs);
+const sections = Object.keys(groupedDocs);
 ---
 
 <Layout
@@ -12,57 +24,51 @@ import Layout from '../layouts/Layout.astro';
 
       <p class="intro">
         Tech enthusiast documenting my journey through DevOps, infrastructure,
-        local AI, automation and homelab engineering.
+        local AI, automation and homelabing.
       </p>
     </section>
 
-    <section class="projects">
+    <section id="about" class="about-section">
       <div class="section-header">
-        <p class="eyebrow">HOMELAB</p>
-        <h2>Projects &amp; Write-ups</h2>
+        <h2 class="eyebrow">ABOUT</h2>
       </div>
 
-      <div class="project-grid">
+      <div class="about-grid">
+        <p>
+          I am Siddhant, and this space is where I document the systems I build,
+          break, rebuild, and learn from. Most of my work sits around homelab
+          infrastructure, automation, self-hosting, networking, and practical
+          DevOps experiments.
+        </p>
 
-        <article class="project-card">
-          <p class="project-number">01</p>
-          <h3>Proxmox Homelab Infrastructure</h3>
-          <p>
-            Three-node on-premise infrastructure covering virtualization,
-            containers, Kubernetes, networking, DNS and secure remote access.
-          </p>
-          <a href="/homelab/proxmox/">Read write-up →</a>
-        </article>
-
-        <article class="project-card">
-          <p class="project-number">02</p>
-          <h3>Local AI &amp; LLM Platform</h3>
-          <p>
-            GPU-accelerated local AI infrastructure with Ollama, OpenWebUI,
-            autonomous agents, workflow automation and observability.
-          </p>
-          <a href="/homelab/local-ai/">Read write-up →</a>
-        </article>
-
-        <article class="project-card">
-          <p class="project-number">03</p>
-          <h3>Infrastructure Monitoring &amp; Backup</h3>
-          <p>
-            Self-hosted monitoring, 3-2-1 backups, scheduled snapshots,
-            resource tracking and automated infrastructure alerts.
-          </p>
-          <a href="/homelab/monitoring/">Read write-up →</a>
-        </article>
-
+        <p>
+          I like turning messy notes into clear write-ups that are useful later,
+          both for me and for anyone trying to build something similar. Each
+          section here is meant to be a living record of decisions, setups,
+          lessons, and improvements over time.
+        </p>
       </div>
     </section>
 
-    <footer>
-      <a href="https://github.com/siddhantdembi">GitHub</a>
-      <a href="https://www.linkedin.com/in/siddhantdembi">LinkedIn</a>
-      <a href="https://dembi.xyz">Resume</a>
-      <a>© Siddhant Dembi 2026</a>
-    </footer>
+    <section>
+      <div class="section-header">
+        <p class="eyebrow">DOCS</p>
+        <h2>Sections &amp; Write-ups</h2>
+      </div>
+
+      <div class="project-grid">
+        {sections.map((section, index) => (
+          <article class="project-card">
+            <p class="project-number">{String(index + 1).padStart(2, '0')}</p>
+            <h3>{getSectionTitle(section, docs)}</h3>
+            <p>{getSectionDescription(section, docs)}</p>
+            <a href={getSectionUrl(section)}>
+              {groupedDocs[section].length} {groupedDocs[section].length === 1 ? 'write-up' : 'write-ups'} →
+            </a>
+          </article>
+        ))}
+      </div>
+    </section>
   </main>
 </Layout>
 
@@ -111,6 +117,23 @@ import Layout from '../layouts/Layout.astro';
     letter-spacing: -0.03em;
   }
 
+  .about-section {
+    margin-bottom: 100px;
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 28px;
+  }
+
+  .about-grid p {
+    margin: 0;
+    color: #555;
+    font-size: 1.05rem;
+    line-height: 1.8;
+  }
+
   .project-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -121,7 +144,9 @@ import Layout from '../layouts/Layout.astro';
     padding: 28px;
     border: 1px solid #ddd;
     border-radius: 12px;
-    transition: border-color 0.2s ease, transform 0.2s ease;
+    transition:
+      border-color 0.2s ease,
+      transform 0.2s ease;
   }
 
   .project-card:hover {
@@ -149,24 +174,14 @@ import Layout from '../layouts/Layout.astro';
   }
 
   .project-card a,
-  footer a {
+  .project-card a {
     color: #111;
     font-weight: 600;
     text-decoration: none;
   }
 
-  .project-card a:hover,
-  footer a:hover {
+  .project-card a:hover {
     text-decoration: underline;
-  }
-
-  footer {
-    display: flex;
-    gap: 24px;
-    margin-top: 100px;
-    padding-top: 24px;
-    border-top: 1px solid #ddd;
-    font-size: 0.9rem;
   }
 
   @media (max-width: 800px) {
@@ -178,16 +193,21 @@ import Layout from '../layouts/Layout.astro';
       margin-bottom: 64px;
     }
 
+    .about-section {
+      margin-bottom: 64px;
+    }
+
+    .about-grid {
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
     .project-grid {
       grid-template-columns: 1fr;
     }
 
     .project-card p:not(.project-number) {
       min-height: auto;
-    }
-
-    footer {
-      margin-top: 64px;
     }
   }
 </style>

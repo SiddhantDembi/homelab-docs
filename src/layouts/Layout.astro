@@ -6,7 +6,7 @@ interface Props {
 
 const {
   title = 'Siddhant Dembi — Engineering & Homelab',
-  description = 'Technical documentation covering DevOps, infrastructure, local AI, automation and homelab engineering.',
+  description = 'Technical documentation covering DevOps, infrastructure, local AI, automation and homelabing.',
 } = Astro.props;
 
 import Header from '../components/Header.astro';
@@ -18,8 +18,6 @@ import Header from '../components/Header.astro';
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="description" content={description} />
-    <meta name="generator" content={Astro.generator} />
-
 	<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
     <title>{title}</title>
@@ -49,6 +47,7 @@ import Header from '../components/Header.astro';
 
       a {
         color: inherit;
+        cursor: pointer;
       }
 
       ::selection {

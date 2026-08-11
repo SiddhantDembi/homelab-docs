@@ -1,0 +1,82 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../layouts/Layout.astro';
+import DocCard from '../../components/DocCard.astro';
+import {
+  getDocParts,
+  getPublishedDocs,
+  getSectionDescription,
+  getSectionTitle,
+  sortDocs,
+} from '../../lib/docs';
+
+export async function getStaticPaths() {
+  const docs = getPublishedDocs(await getCollection('docs'));
+  const sections = [...new Set(docs.map((doc) => getDocParts(doc).section))];
+
+  return sections.map((section) => ({
+    params: { section },
+    props: {
+      section,
+      docs: sortDocs(docs.filter((doc) => getDocParts(doc).section === section)),
+      allDocs: docs,
+    },
+  }));
+}
+
+const { section, docs, allDocs } = Astro.props;
+const title = getSectionTitle(section, allDocs);
+const description = getSectionDescription(section, allDocs);
+---
+
+<Layout title={`${title} — Siddhant Dembi`} description={description}>
+  <main class="page">
+    <header class="page-header">
+      <p class="eyebrow">{title.toUpperCase()}</p>
+      <h1>{description}</h1>
+    </header>
+
+    <section>
+      {docs.map((doc, index) => <DocCard doc={doc} number={String(index + 1).padStart(2, '0')} />)}
+    </section>
+  </main>
+</Layout>
+
+<style>
+  .page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 90px 24px 100px;
+  }
+
+  .page-header {
+    max-width: 720px;
+    margin-bottom: 80px;
+  }
+
+  .eyebrow {
+    margin: 0 0 18px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    color: #777;
+  }
+
+  h1 {
+    margin: 0;
+    max-width: 760px;
+    font-size: clamp(2.5rem, 6vw, 4.5rem);
+    line-height: 1;
+    letter-spacing: -0.045em;
+  }
+
+  @media (max-width: 600px) {
+    .page {
+      padding: 60px 20px 80px;
+    }
+
+    .page-header {
+      margin-bottom: 55px;
+    }
+  }
+</style>
