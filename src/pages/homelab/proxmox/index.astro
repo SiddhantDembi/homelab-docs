@@ -1,0 +1,1015 @@
+---
+import Layout from '../../../layouts/Layout.astro';
+---
+
+<Layout
+  title="Proxmox Homelab Infrastructure — Siddhant Dembi"
+  description="A technical write-up covering my three-node Proxmox homelab, virtualization, Kubernetes, networking and remote access."
+>
+  <main class="article">
+
+    <header class="article-header">
+      <p class="eyebrow">HOMELAB / 01</p>
+
+      <h1>Proxmox Homelab Infrastructure</h1>
+
+      <p class="subtitle">
+        Building and operating a three-node on-premise environment for
+        self-hosted services, infrastructure development and experimentation.
+      </p>
+
+      <div class="meta">
+        <span>Infrastructure</span>
+        <span>Proxmox</span>
+        <span>Kubernetes</span>
+        <span>Networking</span>
+      </div>
+    </header>
+
+    <div class="article-layout">
+
+      <article class="content">
+
+        <section id="overview">
+          <h2>Overview</h2>
+
+          <p>
+            What started as a single Raspberry Pi 5 used for my first year of
+            homelab experimentation has evolved into a multi-node on-premise
+            infrastructure spanning two independent Proxmox hosts and a
+            dedicated Raspberry Pi service node.
+          </p>
+
+          <p>
+            The environment is built primarily for self-hosted services,
+            infrastructure development, virtualization, networking, AI
+            workloads and experimentation. The two Proxmox hosts run virtual
+            machines and TrueNAS instances, while the Raspberry Pi provides
+            additional network services and an independent backup copy of
+            important NAS data.
+          </p>
+
+          <p>
+            The infrastructure currently supports more than 100 containers and
+            10 virtual machines, along with a three-node K3s Kubernetes cluster,
+            local AI workloads, NAS storage, network services and remote-access
+            infrastructure.
+          </p>
+        </section>
+
+        <section id="goals">
+          <h2>Goals</h2>
+
+          <ul>
+            <li>
+              Build an on-premise environment for experimenting with
+              virtualization, containers, Kubernetes, networking and
+              self-hosted services.
+            </li>
+
+            <li>
+              Reduce reliance on cloud infrastructure by running applications,
+              storage and AI workloads locally.
+            </li>
+
+            <li>
+              Create a flexible environment where new VMs, containers and
+              services can be provisioned and tested without affecting
+              critical workloads.
+            </li>
+
+            <li>
+              Maintain independent storage and backup paths across multiple
+              physical machines for better resilience and recovery.
+            </li>
+
+            <li>
+              Provide secure remote access to selected services without
+              directly exposing internal services to the public internet.
+            </li>
+          </ul>
+        </section>
+
+        <section id="architecture">
+          <h2>Architecture</h2>
+
+          <p>
+            The current infrastructure consists of two independent Proxmox
+            hosts connected to the same local network, along with a Raspberry
+            Pi 5 that operates independently from the virtualization
+            environment.
+          </p>
+
+          <p>
+            The first Proxmox host is an ASUS NUC 14 Pro Plus and acts as the
+            primary infrastructure node, hosting services such as TrueNAS,
+            networking, applications, SMTP and testing workloads. The second
+            host is a custom-built PC with a dedicated NVIDIA GPU and
+            additional storage, primarily used for AI workloads, backups,
+            Kubernetes experimentation and other compute-heavy workloads.
+          </p>
+
+          <p>
+            The Raspberry Pi 5 started as my original and only homelab server
+            during 2024–2025. It now serves as an independent network and
+            backup service node, providing additional reverse-proxy and VPN
+            capabilities as well as an occasional synchronized copy of NAS
+            data.
+          </p>
+
+          <div class="architecture-diagram">
+
+            <div class="diagram-box">
+              Internet
+            </div>
+
+            <div class="diagram-line"></div>
+
+            <div class="diagram-box">
+              ISP Router
+            </div>
+
+            <div class="diagram-line"></div>
+
+            <div class="diagram-box">
+              Unmanaged Switch
+            </div>
+
+            <div class="diagram-line"></div>
+
+            <div class="nodes">
+
+              <div class="node">
+                <strong>Node 1</strong>
+                <span>ASUS NUC 14 Pro Plus</span>
+                <small>Proxmox</small>
+                <small>TrueNAS</small>
+                <small>Network Services</small>
+                <small>Applications &amp; Testing</small>
+              </div>
+
+              <div class="node">
+                <strong>Node 2</strong>
+                <span>Custom PC</span>
+                <small>Proxmox</small>
+                <small>TrueNAS Backup</small>
+                <small>AI Workloads</small>
+                <small>K3s Cluster</small>
+              </div>
+
+              <div class="node">
+                <strong>Node 3</strong>
+                <span>Raspberry Pi 5</span>
+                <small>Raspberry Pi OS</small>
+                <small>VPN &amp; Reverse Proxy</small>
+                <small>NAS Backup Copy</small>
+              </div>
+
+            </div>
+
+          </div>
+        </section>
+
+        <section id="hardware">
+          <h2>Hardware</h2>
+
+          <p>
+            The infrastructure is distributed across three physical machines,
+            each serving a different role based on its compute, storage and
+            networking capabilities.
+          </p>
+
+          <div class="table-wrapper">
+
+            <table>
+              <thead>
+                <tr>
+                  <th>Node</th>
+                  <th>Hardware</th>
+                  <th>Storage</th>
+                  <th>Primary Role</th>
+                </tr>
+              </thead>
+
+              <tbody>
+
+                <tr>
+                  <td>Node 1</td>
+
+                  <td>
+                    ASUS NUC 14 Pro Plus<br />
+                    Core Ultra 5 125H<br />
+                    64 GB DDR5-4800
+                  </td>
+
+                  <td>
+                    2 TB Corsair NVMe<br />
+                    4 TB Samsung 990 Pro
+                  </td>
+
+                  <td>
+                    Primary NAS, infrastructure services,
+                    applications and testing
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Node 2</td>
+
+                  <td>
+                    Custom PC<br />
+                    Core Ultra 7 265K<br />
+                    64 GB DDR5-6000<br />
+                    RTX 3060 12 GB
+                  </td>
+
+                  <td>
+                    1 TB WD Blue NVMe<br />
+                    8 TB Seagate IronWolf
+                  </td>
+
+                  <td>
+                    AI workloads, NAS backup,
+                    Kubernetes and experimentation
+                  </td>
+                </tr>
+
+                <tr>
+                  <td>Node 3</td>
+
+                  <td>
+                    Raspberry Pi 5<br />
+                    8 GB RAM
+                  </td>
+
+                  <td>
+                    256 GB SATA SSD<br />
+                    1 TB + 1 TB + 2 TB HDD
+                  </td>
+
+                  <td>
+                    Network services, VPN,
+                    reverse proxy and backup copy
+                  </td>
+                </tr>
+
+              </tbody>
+            </table>
+
+          </div>
+        </section>
+
+        <section id="vms">
+  <h2>Virtual Machines &amp; Containers</h2>
+
+  <p>
+    The two Proxmox hosts use virtual machines to isolate services and
+    workloads by function. This keeps infrastructure services, applications,
+    storage and experimental workloads separated while allowing resources to
+    be allocated independently.
+  </p>
+
+  <p>
+    The ASUS NUC hosts the primary infrastructure workloads, including
+    TrueNAS, media, applications, networking, Minecraft, SMTP and testing.
+    The custom PC hosts the AI environment, backup storage, autonomous agent,
+    and a three-VM K3s Kubernetes cluster.
+  </p>
+
+  <p>
+  VM IDs use a 10x and 20x numbering scheme to avoid conflicts when storing
+  backups from both Proxmox hosts at the same destination.
+</p>
+
+  <div class="vm-grid">
+
+    <div class="vm-host">
+      <div class="vm-host-header">
+        <span class="vm-number">NODE 1</span>
+        <h3>Proxmox — ASUS NUC</h3>
+      </div>
+
+      <div class="vm-list">
+
+        <div class="vm-item">
+          <strong>100 — TrueNAS</strong>
+          <span>Primary NAS and storage services</span>
+        </div>
+
+        <div class="vm-item">
+          <strong>102 — Media</strong>
+          <span>Media-related services</span>
+        </div>
+
+        <div class="vm-item">
+          <strong>103 — Apps</strong>
+          <span>Self-hosted applications</span>
+        </div>
+
+        <div class="vm-item">
+          <strong>104 — Network</strong>
+          <span>Network services including AdGuard Home and Unbound</span>
+        </div>
+
+        <div class="vm-item">
+          <strong>105 — Minecraft</strong>
+          <span>Minecraft server workload</span>
+        </div>
+
+        <div class="vm-item">
+          <strong>106 — SMTP</strong>
+          <span>Mail and SMTP services</span>
+        </div>
+
+        <div class="vm-item">
+          <strong>107 — Test</strong>
+          <span>Testing and experimentation</span>
+        </div>
+
+        <div class="vm-item lxc">
+          <strong>108 — Monitor</strong>
+          <span>LXC for host temperature and resource monitoring</span>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="vm-host">
+      <div class="vm-host-header">
+        <span class="vm-number">NODE 2</span>
+        <h3>Proxmox — Custom PC</h3>
+      </div>
+
+      <div class="vm-list">
+
+        <div class="vm-item">
+          <strong>203 — AI</strong>
+          <span>GPU-accelerated local AI workloads</span>
+        </div>
+
+        <div class="vm-item">
+          <strong>204 — TrueNAS Backup</strong>
+          <span>Backup storage and NAS workloads</span>
+        </div>
+
+        <div class="vm-item">
+          <strong>205 — Agent</strong>
+          <span>Hermes Agent and local AI models</span>
+        </div>
+
+        <div class="vm-item">
+          <strong>206 — K3s Node 1</strong>
+          <span>Kubernetes cluster node</span>
+        </div>
+
+        <div class="vm-item">
+          <strong>207 — K3s Node 2</strong>
+          <span>Kubernetes cluster node</span>
+        </div>
+
+        <div class="vm-item">
+          <strong>208 — K3s Node 3</strong>
+          <span>Kubernetes cluster node</span>
+        </div>
+
+        <div class="vm-item lxc">
+          <strong>201 — Monitor-PC</strong>
+          <span>LXC for host temperature and resource monitoring</span>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div class="templates-note">
+    <strong>VM Templates</strong>
+    <span>
+      Both hosts maintain an Ubuntu template for quickly provisioning new
+      virtual machines.
+    </span>
+  </div>
+
+</section>
+
+
+        <section id="networking">
+  <h2>Networking</h2>
+
+  <p>
+    The homelab uses the ISP-provided router as the primary gateway and DHCP
+    server, with all physical nodes and virtual machines connected through an
+    unmanaged network switch.
+  </p>
+
+  <p>
+    DHCP reservations are used to assign consistent local IP addresses to
+    infrastructure services and devices. The router is configured to use the
+    Network VM's IP address as the custom DNS server, allowing devices on the
+    network to resolve internal services through AdGuard Home and Unbound.
+  </p>
+
+  <p>
+    Services that require direct inbound connectivity use port forwarding on
+    the ISP router to route traffic to the appropriate internal services.
+    Public-facing HTTP and HTTPS services are additionally exposed through
+    Cloudflare Tunnel, avoiding the need to directly expose those services
+    through the router.
+  </p>
+
+  <div class="network-flow">
+
+    <div class="network-box">
+      <strong>Internet</strong>
+      <span>ISP</span>
+    </div>
+
+    <div class="network-arrow">↓</div>
+
+    <div class="network-box">
+      <strong>ISP Router</strong>
+      <span>Gateway + DHCP + Port Forwarding</span>
+    </div>
+
+    <div class="network-arrow">↓</div>
+
+    <div class="network-box">
+      <strong>Unmanaged Switch</strong>
+      <span>Local Network</span>
+    </div>
+
+    <div class="network-arrow">↓</div>
+
+    <div class="network-services">
+
+      <div class="network-box">
+        <strong>Network VM</strong>
+        <span>AdGuard Home + Unbound</span>
+      </div>
+
+      <div class="network-box">
+        <strong>Proxmox Nodes</strong>
+        <span>VMs + Containers</span>
+      </div>
+
+      <div class="network-box">
+        <strong>Raspberry Pi 5</strong>
+        <span>VPN + Reverse Proxy</span>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+        <section id="remote-access">
+  <h2>Remote Access</h2>
+
+  <p>
+    I initially experimented with an NGINX reverse proxy to access self-hosted
+    services remotely. I later switched to Cloudflare Tunnel because it offered
+    a more convenient way to publish selected services without managing
+    individual public-facing reverse-proxy configurations.
+  </p>
+
+  <p>
+    Cloudflare Tunnel runs as Docker containers on both the Network VM and
+    Raspberry Pi 5. I use subdomains to provide remote access to the local
+    HTTP and HTTPS services that I choose to expose.
+  </p>
+
+  <p>
+    For direct access to the home network rather than individual services, I
+    use Twingate to establish a private connection into the homelab. I have
+    also experimented with WireGuard as an alternative VPN-based approach for
+    remote network access.
+  </p>
+
+  <div class="remote-access-grid">
+
+    <div class="remote-access-card">
+      <strong>Cloudflare Tunnel</strong>
+      <span>Remote access to selected services through subdomains</span>
+    </div>
+
+    <div class="remote-access-card">
+      <strong>Twingate</strong>
+      <span>Private remote access to the home network</span>
+    </div>
+
+    <div class="remote-access-card">
+      <strong>WireGuard</strong>
+      <span>Experimental VPN-based remote access</span>
+    </div>
+
+  </div>
+</section>
+
+        <section id="challenges">
+  <h2>Challenges &amp; Solutions</h2>
+
+  <p>
+    Building the homelab incrementally introduced several challenges around
+    resource allocation, service isolation, remote access and maintaining
+    reliable backups across independent systems.
+  </p>
+
+  <p>
+    As the number of workloads increased, separating services into dedicated
+    VMs made it easier to manage resources and isolate failures. The second
+    Proxmox host also provided additional compute and storage capacity for
+    workloads that would otherwise compete with the primary infrastructure.
+  </p>
+
+  <p>
+    Remote access was another area that evolved over time. After initially
+    experimenting with an NGINX reverse proxy, I moved to Cloudflare Tunnel
+    for simpler service exposure through subdomains, while using Twingate for
+    private access to the home network.
+  </p>
+
+  <p>
+    Maintaining independent storage across both Proxmox hosts also allowed me
+    to implement cross-host VM backups, reducing dependence on a single
+    physical machine and providing a recovery path in case of host failure.
+  </p>
+
+  <p>
+    The homelab continues to serve as an experimental environment, allowing
+    new infrastructure technologies and architectures to be tested without
+    requiring changes to the core services.
+  </p>
+</section>
+
+<section id="conclusion">
+  <h2>Conclusion</h2>
+
+  <p>
+    The homelab has evolved from a single Raspberry Pi 5 into a distributed
+    on-premise environment spanning two Proxmox hosts and an independent
+    Raspberry Pi service node.
+  </p>
+
+  <p>
+    It now provides the foundation for self-hosted applications, NAS storage,
+    Kubernetes, local AI, networking, remote access and infrastructure
+    experimentation. More importantly, operating the environment end to end
+    has provided practical experience with virtualization, Linux, containers,
+    networking, storage, monitoring, backups and service deployment.
+  </p>
+
+  <p>
+    The infrastructure remains an ongoing project, with new services and
+    technologies continuously being introduced, tested and integrated as I
+    expand the capabilities of the homelab.
+  </p>
+</section>
+
+      </article>
+
+      <aside class="toc">
+        <p>ON THIS PAGE</p>
+
+        <a href="#overview">Overview</a>
+        <a href="#goals">Goals</a>
+        <a href="#architecture">Architecture</a>
+        <a href="#hardware">Hardware</a>
+        <a href="#proxmox">Proxmox Infrastructure</a>
+        <a href="#vms">Virtual Machines &amp; Containers</a>
+        <a href="#kubernetes">Kubernetes with K3s</a>
+        <a href="#networking">Networking</a>
+        <a href="#remote-access">Remote Access</a>
+        <a href="#challenges">Challenges &amp; Solutions</a>
+        <a href="#conclusion">Conclusion</a>
+      </aside>
+
+    </div>
+
+  </main>
+</Layout>
+
+<style>
+  .article {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 80px 24px 120px;
+  }
+
+  .article-header {
+    max-width: 800px;
+    margin-bottom: 80px;
+  }
+
+  .eyebrow {
+    margin: 0 0 20px;
+    color: #777;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+  }
+
+  h1 {
+    margin: 0;
+    font-size: clamp(2.8rem, 6vw, 5rem);
+    line-height: 1;
+    letter-spacing: -0.05em;
+  }
+
+  .subtitle {
+    max-width: 720px;
+    margin: 28px 0 24px;
+    color: #666;
+    font-size: 1.2rem;
+    line-height: 1.7;
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .meta span {
+    padding: 6px 10px;
+    border: 1px solid #ddd;
+    border-radius: 999px;
+    color: #666;
+    font-size: 0.75rem;
+  }
+
+  .article-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 700px) 180px;
+    gap: 80px;
+    align-items: start;
+  }
+
+  .content section {
+    margin-bottom: 64px;
+    scroll-margin-top: 30px;
+  }
+
+  .content h2 {
+    margin: 0 0 20px;
+    font-size: 1.8rem;
+    letter-spacing: -0.03em;
+  }
+
+  .content p,
+  .content li {
+    color: #444;
+    font-size: 1.05rem;
+    line-height: 1.8;
+  }
+
+  .content p {
+    margin-top: 0;
+    margin-bottom: 20px;
+  }
+
+  .content ul {
+    margin: 0;
+    padding-left: 24px;
+  }
+
+  .content li {
+    margin-bottom: 12px;
+  }
+
+  .toc {
+    position: sticky;
+    top: 30px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border-left: 1px solid #ddd;
+    padding-left: 20px;
+  }
+
+  .toc p {
+    margin: 0 0 8px;
+    color: #999;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+  }
+
+  .toc a {
+    color: #777;
+    font-size: 0.8rem;
+    line-height: 1.4;
+    text-decoration: none;
+  }
+
+  .toc a:hover {
+    color: #111;
+  }
+
+  .architecture-diagram {
+    margin-top: 36px;
+    padding: 32px 24px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    background: #fafafa;
+    text-align: center;
+  }
+
+  .diagram-box {
+    display: inline-block;
+    padding: 12px 18px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: #fff;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .diagram-line {
+    width: 1px;
+    height: 24px;
+    margin: 0 auto;
+    background: #ccc;
+  }
+
+  .nodes {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-top: 24px;
+  }
+
+  .node {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background: #fff;
+    text-align: left;
+  }
+
+  .node strong {
+    font-size: 1rem;
+  }
+
+  .node span {
+    margin-bottom: 8px;
+    color: #666;
+    font-size: 0.85rem;
+  }
+
+  .node small {
+    color: #555;
+    font-size: 0.8rem;
+  }
+
+  .table-wrapper {
+    margin-top: 28px;
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+  }
+
+  th,
+  td {
+    padding: 14px 12px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  th {
+    color: #777;
+    font-size: 0.75rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  td {
+    color: #444;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 800px) {
+    .article {
+      padding: 60px 20px 80px;
+    }
+
+    .article-layout {
+      display: block;
+    }
+
+    .toc {
+      display: none;
+    }
+
+    .article-header {
+      margin-bottom: 60px;
+    }
+
+    .nodes {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .article-header h1 {
+      font-size: 2.8rem;
+    }
+
+    .subtitle {
+      font-size: 1.05rem;
+    }
+
+    .content h2 {
+      font-size: 1.55rem;
+    }
+
+    .content p,
+    .content li {
+      font-size: 1rem;
+    }
+  }
+  .vm-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  margin-top: 32px;
+}
+
+.vm-host {
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.vm-host-header {
+  padding: 20px;
+  border-bottom: 1px solid #ddd;
+  background: #fafafa;
+}
+
+.vm-number {
+  display: block;
+  margin-bottom: 6px;
+  color: #999;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+
+.vm-host-header h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.vm-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.vm-item {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 13px 20px;
+  border-bottom: 1px solid #eee;
+}
+
+.vm-item:last-child {
+  border-bottom: none;
+}
+
+.vm-item strong {
+  font-size: 0.85rem;
+}
+
+.vm-item span {
+  color: #777;
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+.vm-item.lxc {
+  background: #fafafa;
+}
+
+.templates-note {
+  display: flex;
+  gap: 12px;
+  align-items: baseline;
+  margin-top: 20px;
+  padding: 16px 20px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 0.85rem;
+}
+
+.templates-note strong {
+  white-space: nowrap;
+}
+
+.templates-note span {
+  color: #666;
+}
+
+@media (max-width: 700px) {
+  .vm-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .templates-note {
+    flex-direction: column;
+    gap: 5px;
+  }
+}
+.network-flow {
+  margin-top: 32px;
+  padding: 28px 20px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  background: #fafafa;
+  text-align: center;
+}
+
+.network-box {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 180px;
+  padding: 14px 18px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: #fff;
+}
+
+.network-box strong {
+  font-size: 0.85rem;
+}
+
+.network-box span {
+  color: #777;
+  font-size: 0.75rem;
+}
+
+.network-arrow {
+  margin: 8px 0;
+  color: #999;
+}
+
+.network-services {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.network-services .network-box {
+  width: 100%;
+  min-width: 0;
+}
+
+@media (max-width: 700px) {
+  .network-services {
+    grid-template-columns: 1fr;
+  }
+}
+.remote-access-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.remote-access-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 18px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  background: #fafafa;
+}
+
+.remote-access-card strong {
+  font-size: 0.9rem;
+}
+
+.remote-access-card span {
+  color: #777;
+  font-size: 0.8rem;
+  line-height: 1.5;
+}
+
+@media (max-width: 700px) {
+  .remote-access-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
