@@ -27,20 +27,30 @@ export function getSectionUrl(section: string) {
 }
 
 export function getSectionTitle(section: string, docs: DocEntry[]) {
-  const titledDoc = docs.find((doc) => getDocParts(doc).section === section && doc.data.sectionTitle);
-  return titledDoc?.data.sectionTitle ?? titleFromSlug(section);
+  const titledDoc = docs.find((doc) => {
+    const parts = getDocParts(doc);
+    return parts.section === section && parts.slug === 'title';
+  });
+
+  return titledDoc?.data.title ?? section;
 }
 
 export function getSectionDescription(section: string, docs: DocEntry[]) {
   const describedDoc = docs.find(
-    (doc) => getDocParts(doc).section === section && doc.data.sectionDescription
+    (doc) => {
+      const parts = getDocParts(doc);
+      return parts.section === section && parts.slug === 'title';
+    }
   );
 
-  return describedDoc?.data.sectionDescription ?? `Technical write-ups and notes about ${titleFromSlug(section)}.`;
+  return describedDoc?.data.description ?? '';
 }
 
 export function getPublishedDocs(docs: DocEntry[]) {
-  return docs.filter((doc) => !doc.data.draft && getDocParts(doc).slug.length > 0);
+  return docs.filter((doc) => {
+    const { slug } = getDocParts(doc);
+    return !doc.data.draft && slug.length > 0 && slug !== 'title';
+  });
 }
 
 export function sortDocs(docs: DocEntry[]) {

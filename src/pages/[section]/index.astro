@@ -11,7 +11,8 @@ import {
 } from '../../lib/docs';
 
 export async function getStaticPaths() {
-  const docs = getPublishedDocs(await getCollection('docs'));
+  const allDocs = await getCollection('docs');
+  const docs = getPublishedDocs(allDocs);
   const sections = [...new Set(docs.map((doc) => getDocParts(doc).section))];
 
   return sections.map((section) => ({
@@ -19,7 +20,7 @@ export async function getStaticPaths() {
     props: {
       section,
       docs: sortDocs(docs.filter((doc) => getDocParts(doc).section === section)),
-      allDocs: docs,
+      allDocs,
     },
   }));
 }

@@ -9,7 +9,8 @@ import {
   groupDocsBySection,
 } from '../lib/docs';
 
-const docs = getPublishedDocs(await getCollection('docs'));
+const allDocs = await getCollection('docs');
+const docs = getPublishedDocs(allDocs);
 const groupedDocs = groupDocsBySection(docs);
 const sections = Object.keys(groupedDocs);
 ---
@@ -30,7 +31,7 @@ const sections = Object.keys(groupedDocs);
 
     <section id="about" class="about-section">
       <div class="section-header">
-        <h2 class="eyebrow">ABOUT</h2>
+        <p class="eyebrow">ABOUT</p>
       </div>
 
       <div class="about-grid">
@@ -52,16 +53,15 @@ const sections = Object.keys(groupedDocs);
 
     <section>
       <div class="section-header">
-        <p class="eyebrow">DOCS</p>
-        <h2>Sections &amp; Write-ups</h2>
+        <p class="eyebrow">Articles</p>
       </div>
 
       <div class="project-grid">
         {sections.map((section, index) => (
           <article class="project-card">
             <p class="project-number">{String(index + 1).padStart(2, '0')}</p>
-            <h3>{getSectionTitle(section, docs)}</h3>
-            <p>{getSectionDescription(section, docs)}</p>
+            <h3>{getSectionTitle(section, allDocs)}</h3>
+            <p>{getSectionDescription(section, allDocs)}</p>
             <a href={getSectionUrl(section)}>
               {groupedDocs[section].length} {groupedDocs[section].length === 1 ? 'write-up' : 'write-ups'} →
             </a>
@@ -125,6 +125,7 @@ const sections = Object.keys(groupedDocs);
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 28px;
+    padding-top: 4px;
   }
 
   .about-grid p {

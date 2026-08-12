@@ -1,8 +1,6 @@
 ---
 title: "Proxmox Homelab Infrastructure"
 description: "Building and operating a three-node on-premise environment for self-hosted services, infrastructure development and experimentation."
-sectionTitle: "Articles"
-sectionDescription: "Documentation of my tech journey"
 order: 1
 tags:
   - Infrastructure

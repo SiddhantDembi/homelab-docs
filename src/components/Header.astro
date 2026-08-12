@@ -2,7 +2,8 @@
 import { getCollection } from 'astro:content';
 import { getPublishedDocs, getSectionTitle, getSectionUrl, groupDocsBySection } from '../lib/docs';
 
-const docs = getPublishedDocs(await getCollection('docs'));
+const allDocs = await getCollection('docs');
+const docs = getPublishedDocs(allDocs);
 const sections = Object.keys(groupDocsBySection(docs));
 
 const socials = [
@@ -30,7 +31,7 @@ const socials = [
       <a href="/">Home</a>
       <a href="/resume">Resume</a>
       <a href="/#about">About</a>
-      {sections.map((section) => <a href={getSectionUrl(section)}>{getSectionTitle(section, docs)}</a>)}
+      {sections.map((section) => <a href={getSectionUrl(section)}>{getSectionTitle(section, allDocs)}</a>)}
     </nav>
 
     <div class="nav-actions">
