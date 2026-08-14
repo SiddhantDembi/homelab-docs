@@ -1,11 +1,5 @@
 ---
-import { getCollection } from 'astro:content';
 import { Moon, Search, Sun } from '@lucide/astro';
-import { getPublishedDocs, getSectionTitle, getSectionUrl, groupDocsBySection } from '../lib/docs';
-
-const allDocs = await getCollection('docs');
-const docs = getPublishedDocs(allDocs);
-const sections = Object.keys(groupDocsBySection(docs));
 
 const socials = [
   {
@@ -24,15 +18,18 @@ const socials = [
     icon: 'twitter',
   },
 ];
+
+const pathname = Astro.url.pathname;
+const isCurrent = (href: string) => href === '/' ? pathname === '/' : pathname.startsWith(href);
 ---
 
 <header data-pagefind-ignore>
   <div class="nav">
     <nav class="primary-nav">
-      <a href="/">Home</a>
-      <a href="/resume">Resume</a>
-      <a href="/#about">About</a>
-      {sections.map((section) => <a href={getSectionUrl(section)}>{getSectionTitle(section, allDocs)}</a>)}
+      <a href="/" aria-current={isCurrent('/') ? 'page' : undefined}>Home</a>
+      <a href="/resume" aria-current={isCurrent('/resume') ? 'page' : undefined}>Resume</a>
+      <a href="/about/" aria-current={isCurrent('/about/') ? 'page' : undefined}>About</a>
+      <a href="/articles/" aria-current={isCurrent('/articles/') ? 'page' : undefined}>Articles</a>
     </nav>
 
     <div class="nav-actions">
@@ -112,15 +109,20 @@ const socials = [
 
 <style>
   header {
+    position: sticky;
+    top: 0;
+    z-index: 20;
     width: 100%;
     border-bottom: 1px solid var(--border);
-    background: var(--background);
+    background: color-mix(in srgb, var(--background) 90%, transparent);
+    backdrop-filter: blur(14px);
   }
 
   .nav {
-    max-width: 1100px;
+    max-width: var(--page-width);
     margin: 0 auto;
-    padding: 20px 24px;
+    min-height: 72px;
+    padding: 14px 24px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -135,12 +137,41 @@ const socials = [
   }
 
   .primary-nav a {
+    position: relative;
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    padding-inline: 4px;
     color: var(--text-muted);
     font-size: 0.9rem;
     text-decoration: none;
+    transition: color var(--transition-fast);
   }
 
   .primary-nav a:hover {
+    color: var(--text);
+  }
+
+  .primary-nav a::after {
+    position: absolute;
+    right: 0;
+    bottom: 5px;
+    left: 0;
+    height: 1px;
+    background: var(--accent);
+    content: '';
+    opacity: 0;
+    transform: scaleX(0.4);
+    transition: opacity var(--transition-fast), transform var(--transition-fast);
+  }
+
+  .primary-nav a:hover::after,
+  .primary-nav a[aria-current='page']::after {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+
+  .primary-nav a[aria-current='page'] {
     color: var(--text);
   }
 
@@ -160,21 +191,26 @@ const socials = [
 
   .icon-button {
     display: inline-flex;
-    width: 34px;
-    height: 34px;
+    width: 44px;
+    height: 44px;
     align-items: center;
     justify-content: center;
     padding: 0;
     border: 0;
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     background: transparent;
     color: var(--text-muted);
     cursor: pointer;
+    transition: background-color var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
   }
 
   .icon-button:hover {
     background: var(--surface-strong);
     color: var(--text);
+  }
+
+  .icon-button:active {
+    transform: translateY(1px);
   }
 
   .theme-icon-sun {
@@ -196,13 +232,20 @@ const socials = [
   }
 
   .social-icons a {
+    display: grid;
+    width: 44px;
+    height: 44px;
+    place-items: center;
+    border-radius: var(--radius-sm);
     color: var(--text-muted);
     text-decoration: none;
-    transition: color 0.2s ease;
+    transition: background-color var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
   }
 
   .social-icons a:hover {
+    background: var(--surface-strong);
     color: var(--text);
+    transform: translateY(-1px);
   }
 
   .social-icons svg {
@@ -213,14 +256,15 @@ const socials = [
 
   @media (max-width: 600px) {
     .nav {
-      padding: 16px 20px;
+      min-height: auto;
+      padding: 10px 20px 12px;
       flex-wrap: wrap;
       justify-content: center;
       gap: 12px;
     }
 
     .primary-nav {
-      gap: 16px;
+      gap: 12px;
       order: 3;
       flex-basis: 100%;
       justify-content: center;
@@ -231,17 +275,8 @@ const socials = [
       font-size: 0.8rem;
     }
 
-    .social-icons {
-      gap: 8px;
-    }
-
-    .social-icons svg {
-      width: 16px;
-      height: 16px;
-    }
-
     .site-tools {
-      padding-right: 10px;
+      padding-right: 8px;
     }
   }
 </style>

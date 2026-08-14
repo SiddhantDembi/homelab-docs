@@ -1,14 +1,14 @@
 ---
 import { getCollection } from 'astro:content';
-import Layout from '../../layouts/Layout.astro';
-import DocCard from '../../components/DocCard.astro';
+import Layout from '../../../layouts/Layout.astro';
+import DocCard from '../../../components/DocCard.astro';
 import {
   getDocParts,
   getPublishedDocs,
   getSectionDescription,
   getSectionTitle,
   sortDocs,
-} from '../../lib/docs';
+} from '../../../lib/docs';
 
 export async function getStaticPaths() {
   const allDocs = await getCollection('docs');
@@ -34,7 +34,7 @@ const description = getSectionDescription(section, allDocs);
   <main class="page" data-pagefind-body>
     <header class="page-header">
       <p class="eyebrow">{title.toUpperCase()}</p>
-      <h1>{description}</h1>
+      <h2>{description}</h2>
     </header>
 
     <section>
@@ -47,12 +47,12 @@ const description = getSectionDescription(section, allDocs);
   .page {
     max-width: 900px;
     margin: 0 auto;
-    padding: 90px 24px 100px;
+    padding: var(--space-9) 24px calc(var(--space-9) + var(--space-5));
   }
 
   .page-header {
     max-width: 720px;
-    margin-bottom: 80px;
+    margin-bottom: var(--space-8);
   }
 
   .eyebrow {
@@ -63,21 +63,21 @@ const description = getSectionDescription(section, allDocs);
     color: var(--text-muted);
   }
 
-  h1 {
+  h2 {
     margin: 0;
     max-width: 760px;
-    font-size: clamp(2.5rem, 6vw, 4.5rem);
-    line-height: 1;
-    letter-spacing: 0;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    line-height: 1.08;
+    letter-spacing: -0.03em;
   }
 
   @media (max-width: 600px) {
     .page {
-      padding: 60px 20px 80px;
+      padding: var(--space-8) 20px var(--space-9);
     }
 
     .page-header {
-      margin-bottom: 55px;
+      margin-bottom: var(--space-7);
     }
   }
 </style>

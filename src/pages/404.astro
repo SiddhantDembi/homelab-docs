@@ -38,7 +38,7 @@ const primarySection = sections[0];
     max-width: 760px;
     min-height: calc(100vh - 76px);
     margin: 0 auto;
-    padding: 14vh 24px 80px;
+    padding: 14vh 24px var(--space-9);
   }
 
   .eyebrow {
@@ -54,6 +54,7 @@ const primarySection = sections[0];
     margin: 0;
     font-size: clamp(3rem, 7vw, 5rem);
     line-height: 1;
+    letter-spacing: -0.035em;
   }
 
   .message {
@@ -78,10 +79,11 @@ const primarySection = sections[0];
     gap: 9px;
     padding: 0 18px;
     border: 1px solid var(--text);
-    border-radius: 6px;
+    border-radius: var(--radius-sm);
     font-size: 0.92rem;
     font-weight: 600;
     text-decoration: none;
+    transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
   }
 
   .primary-action {
@@ -97,6 +99,10 @@ const primarySection = sections[0];
     border-color: var(--accent);
     background: var(--accent);
     color: var(--background);
+  }
+
+  .actions a:active {
+    transform: translateY(1px);
   }
 
   @media (max-width: 600px) {

@@ -55,8 +55,28 @@ import Header from '../components/Header.astro';
         --border: #dedfdd;
         --border-strong: #9da29e;
         --accent: #176b63;
+        --accent-strong: #0f554f;
+        --accent-soft: #e7f2ef;
         --button-text: #fff;
         --paper: #fff;
+        --shadow-sm: 0 1px 2px rgb(17 24 20 / 0.05), 0 8px 24px rgb(17 24 20 / 0.04);
+        --shadow-md: 0 18px 50px rgb(17 24 20 / 0.1);
+        --radius-sm: 6px;
+        --radius-md: 10px;
+        --radius-lg: 16px;
+        --page-width: 1100px;
+        --content-width: 720px;
+        --space-1: 0.25rem;
+        --space-2: 0.5rem;
+        --space-3: 0.75rem;
+        --space-4: 1rem;
+        --space-5: 1.5rem;
+        --space-6: 2rem;
+        --space-7: 3rem;
+        --space-8: 4rem;
+        --space-9: 6rem;
+        --transition-fast: 160ms ease;
+        --transition-base: 220ms ease;
       }
 
       :root[data-theme='dark'] {
@@ -70,7 +90,11 @@ import Header from '../components/Header.astro';
         --border: #343936;
         --border-strong: #626a64;
         --accent: #7bcabb;
+        --accent-strong: #a0ded2;
+        --accent-soft: #18312d;
         --button-text: #111312;
+        --shadow-sm: 0 1px 2px rgb(0 0 0 / 0.2), 0 8px 24px rgb(0 0 0 / 0.16);
+        --shadow-md: 0 18px 50px rgb(0 0 0 / 0.28);
       }
 
       * {
@@ -79,6 +103,7 @@ import Header from '../components/Header.astro';
 
       html {
         scroll-behavior: smooth;
+        scrollbar-gutter: stable;
       }
 
       body {
@@ -86,11 +111,26 @@ import Header from '../components/Header.astro';
         min-width: 320px;
         background: var(--background);
         color: var(--text);
+        line-height: 1.5;
+        overflow-wrap: break-word;
+        transition: background-color var(--transition-base), color var(--transition-base);
       }
 
       a {
         color: inherit;
         cursor: pointer;
+        text-decoration-thickness: 1px;
+        text-underline-offset: 0.2em;
+      }
+
+      button,
+      input {
+        font: inherit;
+      }
+
+      img,
+      svg {
+        max-width: 100%;
       }
 
       ::selection {
@@ -100,7 +140,22 @@ import Header from '../components/Header.astro';
 
       :focus-visible {
         outline: 2px solid var(--accent);
-        outline-offset: 4px;
+        outline-offset: 3px;
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          transition-duration: 0.01ms !important;
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+        }
       }
 
       .sr-only {

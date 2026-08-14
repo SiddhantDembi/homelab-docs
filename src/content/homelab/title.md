@@ -1,4 +1,4 @@
 ---
 title: "Homelab"
-description: "Documentation of my homelab and self-hosting journey"
+description: "Documentation of my homelab journey"
 ---

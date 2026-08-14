@@ -1,0 +1,81 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+
+<Layout
+  title="About — Siddhant Dembi"
+  description="About Siddhant Dembi and the technical documentation on this site."
+>
+  <main class="page" data-pagefind-body>
+    <header class="page-header">
+      <h2>About</h2>
+    </header>
+
+    <section class="about-grid">
+      <p>
+        I am Siddhant, and this space is where I document the systems I build,
+        break, rebuild, and learn from. Most of my work sits around homelab
+        infrastructure, automation, self-hosting, networking, and practical
+        DevOps experiments.
+      </p>
+
+      <p>
+        I like turning messy notes into clear write-ups that are useful later,
+        both for me and for anyone trying to build something similar. Each
+        section here is meant to be a living record of decisions, setups,
+        lessons, and improvements over time.
+      </p>
+    </section>
+  </main>
+</Layout>
+
+<style>
+  .page {
+    max-width: var(--page-width);
+    margin: 0 auto;
+    padding: var(--space-9) 24px calc(var(--space-9) + var(--space-5));
+  }
+
+  .page-header {
+    max-width: 760px;
+    margin-bottom: var(--space-8);
+  }
+
+  h2 {
+    margin: 0;
+    font-size: clamp(2.75rem, 6vw, 4.75rem);
+    line-height: 1;
+    letter-spacing: -0.035em;
+  }
+
+  .about-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: clamp(var(--space-6), 5vw, var(--space-9));
+    padding-top: var(--space-7);
+    border-top: 1px solid var(--border);
+  }
+
+  .about-grid p {
+    margin: 0;
+    color: var(--text-soft);
+    font-size: clamp(1.05rem, 1.6vw, 1.18rem);
+    line-height: 1.8;
+  }
+
+  @media (max-width: 800px) {
+    .page {
+      padding: var(--space-8) 20px var(--space-9);
+    }
+
+    .page-header {
+      margin-bottom: var(--space-7);
+    }
+
+    .about-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-5);
+      padding-top: var(--space-6);
+    }
+  }
+</style>

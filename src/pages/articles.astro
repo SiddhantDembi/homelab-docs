@@ -1,0 +1,137 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../layouts/Layout.astro';
+import {
+  getPublishedDocs,
+  getSectionDescription,
+  getSectionTitle,
+  getSectionUrl,
+  groupDocsBySection,
+} from '../lib/docs';
+
+const allDocs = await getCollection('docs');
+const docs = getPublishedDocs(allDocs);
+const groupedDocs = groupDocsBySection(docs);
+const sections = Object.keys(groupedDocs);
+---
+
+<Layout
+  title="Articles — Siddhant Dembi"
+  description="Technical articles and documentation by Siddhant Dembi."
+>
+  <main class="page" data-pagefind-body>
+    <header class="page-header">
+      <h2>Articles</h2>
+    </header>
+
+    <section class="project-grid" aria-label="Article sections">
+      {sections.map((section, index) => (
+        <article class="project-card">
+          <p class="project-number">{String(index + 1).padStart(2, '0')}</p>
+          <h2>{getSectionTitle(section, allDocs)}</h2>
+          <p>{getSectionDescription(section, allDocs)}</p>
+          <a href={getSectionUrl(section)}>
+            {groupedDocs[section].length} {groupedDocs[section].length === 1 ? 'write-up' : 'write-ups'}
+          </a>
+        </article>
+      ))}
+    </section>
+  </main>
+</Layout>
+
+<style>
+  .page {
+    max-width: var(--page-width);
+    margin: 0 auto;
+    padding: var(--space-9) 24px calc(var(--space-9) + var(--space-5));
+  }
+
+  .page-header {
+    max-width: 760px;
+    margin-bottom: var(--space-8);
+  }
+
+  .page-header h2 {
+    margin: 0;
+    font-size: clamp(2.75rem, 6vw, 4.75rem);
+    line-height: 1;
+    letter-spacing: -0.035em;
+  }
+
+  .project-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-5);
+  }
+
+  .project-card {
+    display: flex;
+    min-height: 270px;
+    padding: var(--space-6);
+    flex-direction: column;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    transition:
+      border-color 0.2s ease,
+      background-color var(--transition-base),
+      box-shadow var(--transition-base),
+      transform var(--transition-base);
+  }
+
+  .project-card:hover {
+    border-color: var(--border-strong);
+    transform: translateY(-2px);
+    background: var(--background);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .project-number {
+    margin: 0 0 24px;
+    color: var(--text-faint);
+    font-size: 0.8rem;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .project-card h2 {
+    margin: 0;
+    font-size: 1.2rem;
+    line-height: 1.3;
+  }
+
+  .project-card p:not(.project-number) {
+    flex: 1;
+    margin: 16px 0 24px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  .project-card a {
+    display: inline-flex;
+    min-height: 44px;
+    align-items: center;
+    color: var(--text);
+    font-weight: 600;
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .project-card a:hover {
+    color: var(--accent-strong);
+    text-decoration: underline;
+  }
+
+  @media (max-width: 800px) {
+    .page {
+      padding: var(--space-8) 20px var(--space-9);
+    }
+
+    .project-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .project-card p:not(.project-number) {
+      min-height: auto;
+    }
+  }
+</style>

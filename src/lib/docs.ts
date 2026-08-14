@@ -19,11 +19,11 @@ export function getDocParts(doc: DocEntry) {
 
 export function getDocUrl(doc: DocEntry) {
   const { section, slug } = getDocParts(doc);
-  return `/${section}/${slug}/`;
+  return `/articles/${section}/${slug}/`;
 }
 
 export function getSectionUrl(section: string) {
-  return `/${section}/`;
+  return `/articles/${section}/`;
 }
 
 export function getSectionTitle(section: string, docs: DocEntry[]) {
