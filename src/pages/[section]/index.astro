@@ -31,7 +31,7 @@ const description = getSectionDescription(section, allDocs);
 ---
 
 <Layout title={`${title} — Siddhant Dembi`} description={description}>
-  <main class="page">
+  <main class="page" data-pagefind-body>
     <header class="page-header">
       <p class="eyebrow">{title.toUpperCase()}</p>
       <h1>{description}</h1>
@@ -60,7 +60,7 @@ const description = getSectionDescription(section, allDocs);
     font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 0.12em;
-    color: #777;
+    color: var(--text-muted);
   }
 
   h1 {
@@ -68,7 +68,7 @@ const description = getSectionDescription(section, allDocs);
     max-width: 760px;
     font-size: clamp(2.5rem, 6vw, 4.5rem);
     line-height: 1;
-    letter-spacing: -0.045em;
+    letter-spacing: 0;
   }
 
   @media (max-width: 600px) {

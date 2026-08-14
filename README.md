@@ -176,6 +176,18 @@ draft: true
 | `npm run preview` | Build and preview locally |
 | `npm run deploy` | Build and deploy with Wrangler |
 
+## Update The Resume
+
+Replace only this file:
+
+```text
+public/resume/SiddhantDembi.pdf
+```
+
+Then run `npm run build` or `npm run deploy`. The build automatically creates a high-resolution preview for every page and reads the clickable links from the new PDF. New page counts, layouts and link positions therefore update without editing the website code.
+
+For links to be detected, add them as actual PDF hyperlinks when exporting the resume. If a PDF has no embedded links, the preview will still display correctly and the download will still work.
+
 ## Deployment
 
 The production URL is configured in:

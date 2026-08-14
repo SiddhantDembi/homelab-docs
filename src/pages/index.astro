@@ -19,7 +19,7 @@ const sections = Object.keys(groupedDocs);
   title="Siddhant Dembi — Homelab"
   description="Technical write-ups covering my homelab infrastructure, local AI systems, automation, networking, monitoring and backups."
 >
-  <main>
+  <main data-pagefind-body>
     <section class="hero">
       <h1>Siddhant Dembi</h1>
 
@@ -29,7 +29,7 @@ const sections = Object.keys(groupedDocs);
       </p>
     </section>
 
-    <section id="about" class="about-section">
+    <section id="about" class="about-section" tabindex="-1">
       <div class="section-header">
         <p class="eyebrow">ABOUT</p>
       </div>
@@ -89,14 +89,14 @@ const sections = Object.keys(groupedDocs);
     font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 0.12em;
-    color: #666;
+    color: var(--text-muted);
   }
 
   h1 {
     margin: 0;
     font-size: clamp(3rem, 7vw, 5.5rem);
     line-height: 0.95;
-    letter-spacing: -0.05em;
+    letter-spacing: 0;
   }
 
   .intro {
@@ -104,7 +104,7 @@ const sections = Object.keys(groupedDocs);
     margin-top: 28px;
     font-size: 1.25rem;
     line-height: 1.7;
-    color: #555;
+    color: var(--text-soft);
   }
 
   .section-header {
@@ -114,11 +114,12 @@ const sections = Object.keys(groupedDocs);
   .section-header h2 {
     margin: 0;
     font-size: 2rem;
-    letter-spacing: -0.03em;
+    letter-spacing: 0;
   }
 
   .about-section {
     margin-bottom: 100px;
+    scroll-margin-top: 32px;
   }
 
   .about-grid {
@@ -130,7 +131,7 @@ const sections = Object.keys(groupedDocs);
 
   .about-grid p {
     margin: 0;
-    color: #555;
+    color: var(--text-soft);
     font-size: 1.05rem;
     line-height: 1.8;
   }
@@ -143,21 +144,21 @@ const sections = Object.keys(groupedDocs);
 
   .project-card {
     padding: 28px;
-    border: 1px solid #ddd;
-    border-radius: 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
     transition:
       border-color 0.2s ease,
       transform 0.2s ease;
   }
 
   .project-card:hover {
-    border-color: #999;
+    border-color: var(--border-strong);
     transform: translateY(-2px);
   }
 
   .project-number {
     margin: 0 0 24px;
-    color: #888;
+    color: var(--text-faint);
     font-size: 0.8rem;
   }
 
@@ -170,13 +171,12 @@ const sections = Object.keys(groupedDocs);
   .project-card p:not(.project-number) {
     min-height: 110px;
     margin: 16px 0 24px;
-    color: #666;
+    color: var(--text-muted);
     line-height: 1.6;
   }
 
-  .project-card a,
   .project-card a {
-    color: #111;
+    color: var(--text);
     font-weight: 600;
     text-decoration: none;
   }

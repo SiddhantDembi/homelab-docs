@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import { Moon, Search, Sun } from '@lucide/astro';
 import { getPublishedDocs, getSectionTitle, getSectionUrl, groupDocsBySection } from '../lib/docs';
 
 const allDocs = await getCollection('docs');
@@ -25,7 +26,7 @@ const socials = [
 ];
 ---
 
-<header>
+<header data-pagefind-ignore>
   <div class="nav">
     <nav class="primary-nav">
       <a href="/">Home</a>
@@ -35,6 +36,17 @@ const socials = [
     </nav>
 
     <div class="nav-actions">
+      <div class="site-tools">
+        <a class="icon-button" href="/search/" aria-label="Search" title="Search">
+          <Search size={18} stroke-width={1.8} aria-hidden="true" />
+        </a>
+
+        <button class="icon-button theme-toggle" type="button" aria-label="Use dark mode" title="Use dark mode">
+          <Moon class="theme-icon theme-icon-moon" size={18} stroke-width={1.8} aria-hidden="true" />
+          <Sun class="theme-icon theme-icon-sun" size={18} stroke-width={1.8} aria-hidden="true" />
+        </button>
+      </div>
+
       <div class="social-icons" aria-label="Social links">
         {socials.map((social) => (
           <a href={social.href} aria-label={social.label} target="_blank" rel="noreferrer">
@@ -69,10 +81,40 @@ const socials = [
   </div>
 </header>
 
+<script>
+  const themeToggle = document.querySelector<HTMLButtonElement>('.theme-toggle');
+
+  const updateThemeButton = () => {
+    if (!themeToggle) return;
+
+    const isDark = document.documentElement.dataset.theme === 'dark';
+    const label = isDark ? 'Use light mode' : 'Use dark mode';
+    themeToggle.setAttribute('aria-label', label);
+    themeToggle.setAttribute('title', label);
+  };
+
+  themeToggle?.addEventListener('click', () => {
+    const theme = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.style.colorScheme = theme;
+
+    try {
+      localStorage.setItem('theme', theme);
+    } catch {
+      // The selected theme still applies for the current page.
+    }
+
+    updateThemeButton();
+  });
+
+  updateThemeButton();
+</script>
+
 <style>
   header {
     width: 100%;
-    border-bottom: 1px solid #e5e5e5;
+    border-bottom: 1px solid var(--border);
+    background: var(--background);
   }
 
   .nav {
@@ -93,19 +135,58 @@ const socials = [
   }
 
   .primary-nav a {
-    color: #666;
+    color: var(--text-muted);
     font-size: 0.9rem;
     text-decoration: none;
   }
 
   .primary-nav a:hover {
-    color: #111;
+    color: var(--text);
   }
 
   .nav-actions {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 14px;
+  }
+
+  .site-tools {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding-right: 12px;
+    border-right: 1px solid var(--border);
+  }
+
+  .icon-button {
+    display: inline-flex;
+    width: 34px;
+    height: 34px;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 0;
+    border-radius: 6px;
+    background: transparent;
+    color: var(--text-muted);
+    cursor: pointer;
+  }
+
+  .icon-button:hover {
+    background: var(--surface-strong);
+    color: var(--text);
+  }
+
+  .theme-icon-sun {
+    display: none;
+  }
+
+  :global(html[data-theme='dark']) .theme-icon-moon {
+    display: none;
+  }
+
+  :global(html[data-theme='dark']) .theme-icon-sun {
+    display: block;
   }
 
   .social-icons {
@@ -115,13 +196,13 @@ const socials = [
   }
 
   .social-icons a {
-    color: #666;
+    color: var(--text-muted);
     text-decoration: none;
     transition: color 0.2s ease;
   }
 
   .social-icons a:hover {
-    color: #111;
+    color: var(--text);
   }
 
   .social-icons svg {
@@ -135,6 +216,7 @@ const socials = [
       padding: 16px 20px;
       flex-wrap: wrap;
       justify-content: center;
+      gap: 12px;
     }
 
     .primary-nav {
@@ -156,6 +238,10 @@ const socials = [
     .social-icons svg {
       width: 16px;
       height: 16px;
+    }
+
+    .site-tools {
+      padding-right: 10px;
     }
   }
 </style>

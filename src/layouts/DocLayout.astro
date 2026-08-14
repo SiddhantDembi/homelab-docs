@@ -15,7 +15,7 @@ const toc = headings.filter((heading) => heading.depth === 2);
 ---
 
 <Layout title={`${title} — Siddhant Dembi`} description={description}>
-  <main class="article">
+  <main class="article" data-pagefind-body>
     <header class="article-header">
       <p class="eyebrow">{eyebrow}</p>
       <h1>{title}</h1>
@@ -57,7 +57,7 @@ const toc = headings.filter((heading) => heading.depth === 2);
 
   .eyebrow {
     margin: 0 0 20px;
-    color: #777;
+    color: var(--text-muted);
     font-size: 0.75rem;
     font-weight: 700;
     letter-spacing: 0.12em;
@@ -67,13 +67,13 @@ const toc = headings.filter((heading) => heading.depth === 2);
     margin: 0;
     font-size: clamp(2.8rem, 6vw, 5rem);
     line-height: 1;
-    letter-spacing: -0.05em;
+    letter-spacing: 0;
   }
 
   .subtitle {
     max-width: 720px;
     margin: 28px 0 24px;
-    color: #666;
+    color: var(--text-muted);
     font-size: 1.2rem;
     line-height: 1.7;
   }
@@ -86,9 +86,9 @@ const toc = headings.filter((heading) => heading.depth === 2);
 
   .meta span {
     padding: 6px 10px;
-    border: 1px solid #ddd;
+    border: 1px solid var(--border);
     border-radius: 999px;
-    color: #666;
+    color: var(--text-muted);
     font-size: 0.75rem;
   }
 
@@ -106,7 +106,7 @@ const toc = headings.filter((heading) => heading.depth === 2);
   .content h2 {
     margin: 64px 0 20px;
     font-size: 1.8rem;
-    letter-spacing: -0.03em;
+    letter-spacing: 0;
     scroll-margin-top: 30px;
   }
 
@@ -121,7 +121,7 @@ const toc = headings.filter((heading) => heading.depth === 2);
 
   .content p,
   .content li {
-    color: #444;
+    color: var(--text-soft);
     font-size: 1.05rem;
     line-height: 1.8;
   }
@@ -145,27 +145,27 @@ const toc = headings.filter((heading) => heading.depth === 2);
     display: flex;
     flex-direction: column;
     gap: 10px;
-    border-left: 1px solid #ddd;
+    border-left: 1px solid var(--border);
     padding-left: 20px;
   }
 
   .toc p {
     margin: 0 0 8px;
-    color: #999;
+    color: var(--text-faint);
     font-size: 0.7rem;
     font-weight: 700;
     letter-spacing: 0.1em;
   }
 
   .toc a {
-    color: #777;
+    color: var(--text-muted);
     font-size: 0.8rem;
     line-height: 1.4;
     text-decoration: none;
   }
 
   .toc a:hover {
-    color: #111;
+    color: var(--text);
   }
 
   .table-wrapper {
@@ -182,20 +182,20 @@ const toc = headings.filter((heading) => heading.depth === 2);
   th,
   td {
     padding: 14px 12px;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid var(--border);
     text-align: left;
     vertical-align: top;
   }
 
   th {
-    color: #777;
+    color: var(--text-muted);
     font-size: 0.75rem;
     letter-spacing: 0.05em;
     text-transform: uppercase;
   }
 
   td {
-    color: #444;
+    color: var(--text-soft);
     line-height: 1.6;
   }
 
@@ -203,9 +203,9 @@ const toc = headings.filter((heading) => heading.depth === 2);
   .network-flow {
     margin-top: 32px;
     padding: 28px 20px;
-    border: 1px solid #ddd;
-    border-radius: 12px;
-    background: #fafafa;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
     text-align: center;
   }
 
@@ -216,9 +216,9 @@ const toc = headings.filter((heading) => heading.depth === 2);
   .diagram-box {
     display: inline-block;
     padding: 12px 18px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--border-strong);
     border-radius: 8px;
-    background: #fff;
+    background: var(--background);
     font-size: 0.9rem;
     font-weight: 600;
   }
@@ -227,7 +227,7 @@ const toc = headings.filter((heading) => heading.depth === 2);
     width: 1px;
     height: 24px;
     margin: 0 auto;
-    background: #ccc;
+    background: var(--border-strong);
   }
 
   .nodes {
@@ -242,9 +242,9 @@ const toc = headings.filter((heading) => heading.depth === 2);
     flex-direction: column;
     gap: 6px;
     padding: 20px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--background);
     text-align: left;
   }
 
@@ -254,12 +254,12 @@ const toc = headings.filter((heading) => heading.depth === 2);
 
   .node span {
     margin-bottom: 8px;
-    color: #666;
+    color: var(--text-muted);
     font-size: 0.85rem;
   }
 
   .node small {
-    color: #555;
+    color: var(--text-soft);
     font-size: 0.8rem;
   }
 
@@ -271,22 +271,22 @@ const toc = headings.filter((heading) => heading.depth === 2);
   }
 
   .vm-host {
-    border: 1px solid #ddd;
-    border-radius: 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
     overflow: hidden;
-    background: #fff;
+    background: var(--background);
   }
 
   .vm-host-header {
     padding: 20px;
-    border-bottom: 1px solid #ddd;
-    background: #fafafa;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
   }
 
   .vm-number {
     display: block;
     margin-bottom: 6px;
-    color: #999;
+    color: var(--text-faint);
     font-size: 0.7rem;
     font-weight: 700;
     letter-spacing: 0.1em;
@@ -307,7 +307,7 @@ const toc = headings.filter((heading) => heading.depth === 2);
     flex-direction: column;
     gap: 3px;
     padding: 13px 20px;
-    border-bottom: 1px solid #eee;
+    border-bottom: 1px solid var(--border);
   }
 
   .vm-item:last-child {
@@ -319,13 +319,13 @@ const toc = headings.filter((heading) => heading.depth === 2);
   }
 
   .vm-item span {
-    color: #777;
+    color: var(--text-muted);
     font-size: 0.78rem;
     line-height: 1.4;
   }
 
   .vm-item.lxc {
-    background: #fafafa;
+    background: var(--surface);
   }
 
   .templates-note {
@@ -334,8 +334,8 @@ const toc = headings.filter((heading) => heading.depth === 2);
     align-items: baseline;
     margin-top: 20px;
     padding: 16px 20px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
     font-size: 0.85rem;
   }
 
@@ -344,7 +344,7 @@ const toc = headings.filter((heading) => heading.depth === 2);
   }
 
   .templates-note span {
-    color: #666;
+    color: var(--text-muted);
   }
 
   .network-box {
@@ -353,9 +353,9 @@ const toc = headings.filter((heading) => heading.depth === 2);
     gap: 5px;
     min-width: 180px;
     padding: 14px 18px;
-    border: 1px solid #ccc;
+    border: 1px solid var(--border-strong);
     border-radius: 8px;
-    background: #fff;
+    background: var(--background);
   }
 
   .network-box strong {
@@ -363,13 +363,13 @@ const toc = headings.filter((heading) => heading.depth === 2);
   }
 
   .network-box span {
-    color: #777;
+    color: var(--text-muted);
     font-size: 0.75rem;
   }
 
   .network-arrow {
     margin: 8px 0;
-    color: #999;
+    color: var(--text-faint);
   }
 
   .network-services {
@@ -396,9 +396,9 @@ const toc = headings.filter((heading) => heading.depth === 2);
     flex-direction: column;
     gap: 8px;
     padding: 18px;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    background: #fafafa;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: var(--surface);
   }
 
   .remote-access-card strong {
@@ -406,7 +406,7 @@ const toc = headings.filter((heading) => heading.depth === 2);
   }
 
   .remote-access-card span {
-    color: #777;
+    color: var(--text-muted);
     font-size: 0.8rem;
     line-height: 1.5;
   }

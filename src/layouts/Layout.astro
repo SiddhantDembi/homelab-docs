@@ -18,17 +18,59 @@ import Header from '../components/Header.astro';
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width" />
     <meta name="description" content={description} />
-	<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
     <title>{title}</title>
+
+    <script is:inline>
+      (() => {
+        const defaultTheme = 'light';
+
+        try {
+          const savedTheme = localStorage.getItem('theme');
+          const theme = savedTheme === 'dark' || savedTheme === 'light' ? savedTheme : defaultTheme;
+          document.documentElement.dataset.theme = theme;
+          document.documentElement.style.colorScheme = theme;
+        } catch {
+          document.documentElement.dataset.theme = defaultTheme;
+          document.documentElement.style.colorScheme = defaultTheme;
+        }
+      })();
+    </script>
 
     <style is:global>
       :root {
         font-family: Georgia, 'Times New Roman', serif;
-        color: #111;
-        background: #fff;
+        color: var(--text);
+        background: var(--background);
         font-synthesis: none;
         text-rendering: optimizeLegibility;
+        --background: #fff;
+        --surface: #fafafa;
+        --surface-strong: #f1f3f1;
+        --text: #111;
+        --text-soft: #4f5350;
+        --text-muted: #686d69;
+        --text-faint: #8a908b;
+        --border: #dedfdd;
+        --border-strong: #9da29e;
+        --accent: #176b63;
+        --button-text: #fff;
+        --paper: #fff;
+      }
+
+      :root[data-theme='dark'] {
+        --background: #111312;
+        --surface: #191c1a;
+        --surface-strong: #222624;
+        --text: #f2f4f1;
+        --text-soft: #c7cbc7;
+        --text-muted: #a1a7a2;
+        --text-faint: #757c77;
+        --border: #343936;
+        --border-strong: #626a64;
+        --accent: #7bcabb;
+        --button-text: #111312;
       }
 
       * {
@@ -42,7 +84,8 @@ import Header from '../components/Header.astro';
       body {
         margin: 0;
         min-width: 320px;
-        background: #fff;
+        background: var(--background);
+        color: var(--text);
       }
 
       a {
@@ -51,14 +94,31 @@ import Header from '../components/Header.astro';
       }
 
       ::selection {
-        background: #111;
-        color: #fff;
+        background: var(--text);
+        color: var(--background);
+      }
+
+      :focus-visible {
+        outline: 2px solid var(--accent);
+        outline-offset: 4px;
+      }
+
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
       }
     </style>
   </head>
 
   <body>
-	<Header />
+    <Header />
     <slot />
   </body>
 </html>

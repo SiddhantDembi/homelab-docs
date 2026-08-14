@@ -1,0 +1,117 @@
+---
+import { getCollection } from 'astro:content';
+import { House, Server } from '@lucide/astro';
+import Layout from '../layouts/Layout.astro';
+import { getPublishedDocs, getSectionTitle, getSectionUrl, groupDocsBySection } from '../lib/docs';
+
+const allDocs = await getCollection('docs');
+const sections = Object.keys(groupDocsBySection(getPublishedDocs(allDocs)));
+const primarySection = sections[0];
+---
+
+<Layout
+  title="Page not found — Siddhant Dembi"
+  description="The requested page could not be found."
+>
+  <main class="not-found" data-pagefind-ignore>
+    <p class="eyebrow">404</p>
+    <h1>This page isn't here.</h1>
+    <p class="message">The link may be outdated, or the page may have moved.</p>
+
+    <div class="actions">
+      <a class="primary-action" href="/">
+        <House size={18} stroke-width={1.8} aria-hidden="true" />
+        Back home
+      </a>
+      {primarySection && (
+        <a class="secondary-action" href={getSectionUrl(primarySection)}>
+          <Server size={18} stroke-width={1.8} aria-hidden="true" />
+          Browse {getSectionTitle(primarySection, allDocs)}
+        </a>
+      )}
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .not-found {
+    max-width: 760px;
+    min-height: calc(100vh - 76px);
+    margin: 0 auto;
+    padding: 14vh 24px 80px;
+  }
+
+  .eyebrow {
+    margin: 0 0 18px;
+    color: var(--accent);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+  }
+
+  h1 {
+    max-width: 640px;
+    margin: 0;
+    font-size: clamp(3rem, 7vw, 5rem);
+    line-height: 1;
+  }
+
+  .message {
+    max-width: 520px;
+    margin: 24px 0 0;
+    color: var(--text-soft);
+    font-size: 1.12rem;
+    line-height: 1.7;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 38px;
+  }
+
+  .actions a {
+    display: inline-flex;
+    min-height: 46px;
+    align-items: center;
+    gap: 9px;
+    padding: 0 18px;
+    border: 1px solid var(--text);
+    border-radius: 6px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .primary-action {
+    background: var(--text);
+    color: var(--button-text);
+  }
+
+  .secondary-action {
+    color: var(--text);
+  }
+
+  .actions a:hover {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: var(--background);
+  }
+
+  @media (max-width: 600px) {
+    .not-found {
+      min-height: auto;
+      padding: 90px 20px 72px;
+    }
+
+    .actions {
+      align-items: stretch;
+      flex-direction: column;
+    }
+
+    .actions a {
+      justify-content: center;
+    }
+  }
+</style>

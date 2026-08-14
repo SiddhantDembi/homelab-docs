@@ -24,17 +24,17 @@ const { doc, number } = Astro.props;
     grid-template-columns: 48px 1fr;
     gap: 18px;
     padding: 28px 0;
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid var(--border);
     color: inherit;
     text-decoration: none;
   }
 
   .doc-card:first-child {
-    border-top: 1px solid #ddd;
+    border-top: 1px solid var(--border);
   }
 
   .number {
-    color: #999;
+    color: var(--text-faint);
     font-size: 0.8rem;
   }
 
@@ -47,12 +47,12 @@ const { doc, number } = Astro.props;
   .content strong {
     font-size: 1.35rem;
     line-height: 1.25;
-    letter-spacing: -0.025em;
+    letter-spacing: 0;
   }
 
   .content span {
     max-width: 680px;
-    color: #666;
+    color: var(--text-muted);
     line-height: 1.65;
   }
 

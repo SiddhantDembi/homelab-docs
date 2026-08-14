@@ -4,6 +4,10 @@ dist/
 # generated types
 .astro/
 
+# generated resume preview and link data
+src/data/resume-links.json
+public/resume/preview/
+
 # dependencies
 node_modules/
 
