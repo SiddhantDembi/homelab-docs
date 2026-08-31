@@ -32,3 +32,6 @@ pnpm-debug.log*
 .dev.vars*
 !.dev.vars.example
 !.env.example
+
+# private local runbooks (never publish or commit)
+private/
