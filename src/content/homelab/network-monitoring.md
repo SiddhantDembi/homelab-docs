@@ -1,5 +1,5 @@
 ---
-title: "Distributed LAN Speed Monitoring with iperf3, InfluxDB & Grafana"
+title: "Network Monitoring with iperf3, InfluxDB & Grafana"
 description: "Building a distributed full-mesh network performance monitoring system across Raspberry Pi and Proxmox nodes using iperf3, InfluxDB, Grafana and Portainer."
 order: 4
 tags:
