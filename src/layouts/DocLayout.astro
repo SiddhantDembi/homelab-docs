@@ -99,6 +99,12 @@ const toc = headings.filter((heading) => heading.depth === 2);
     grid-template-columns: minmax(0, 700px) 180px;
     gap: clamp(var(--space-7), 7vw, var(--space-9));
     align-items: start;
+    min-width: 0;
+  }
+
+  .content {
+    min-width: 0;
+    max-width: 100%;
   }
 
   .content > * {
@@ -184,8 +190,12 @@ const toc = headings.filter((heading) => heading.depth === 2);
   }
 
   .table-wrapper {
+    width: 100%;
+    max-width: 100%;
     margin-top: 28px;
     overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    -webkit-overflow-scrolling: touch;
   }
 
   table {
@@ -454,7 +464,10 @@ const toc = headings.filter((heading) => heading.depth === 2);
 
   @media (max-width: 600px) {
     .article-header h1 {
-      font-size: 2.8rem;
+      max-width: 100%;
+      font-size: clamp(2.2rem, 11vw, 2.8rem);
+      line-height: 1.05;
+      letter-spacing: -0.035em;
     }
 
     .subtitle {

@@ -32,8 +32,6 @@ The backup side follows a 3-2-1 strategy with daily scheduled snapshots for virt
 
 The system uses separate tools for centralized monitoring, detailed troubleshooting, alert delivery and data protection. This keeps each part focused while allowing them to work together as a broader operational layer for the homelab.
 
-<div class="table-wrapper">
-
 | Layer | Components | Role |
 | :--- | :--- | :--- |
 | Central monitoring | Beszel | Displays VM resource usage and infrastructure status from one interface |
@@ -42,8 +40,6 @@ The system uses separate tools for centralized monitoring, detailed troubleshoot
 | Primary infrastructure | Proxmox hosts and TrueNAS | Runs workloads and stores primary VM and data copies |
 | Secondary backup | Second Proxmox host and backup storage | Maintains recovery copies away from the primary host |
 | Independent copy | Raspberry Pi storage node | Holds an additional synchronized copy of important NAS data |
-
-</div>
 
 ## Centralized Monitoring with Beszel
 

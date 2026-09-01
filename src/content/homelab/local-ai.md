@@ -36,16 +36,12 @@ The custom server's RTX 3060 is passed through to the AI VM, giving the guest op
 
 Hermes Agent runs with locally hosted Qwen and Gemma Mixture-of-Experts models. A Telegram integration provides a convenient way to interact with the agent remotely while keeping model inference inside the homelab.
 
-<div class="table-wrapper">
-
 | Layer | Components | Role |
 | :--- | :--- | :--- |
 | AI VM | RTX 3060 12 GB GPU passthrough, Ollama, Open WebUI, Stable Diffusion | Local language-model inference and image generation |
 | Agent VM | Hermes Agent, local Qwen and Gemma MoE models, Telegram integration | Autonomous workflows and remote interaction |
 | Monitoring | Prometheus and Grafana | GPU memory and AI VM performance visibility |
 | Automation | n8n | Connecting AI services to repeatable workflows and other applications |
-
-</div>
 
 ## Local LLM Inference
 

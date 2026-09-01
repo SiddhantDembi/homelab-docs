@@ -71,15 +71,11 @@ The Raspberry Pi 5 started as my original and only homelab server during 2024-20
 
 The infrastructure is distributed across three physical machines, each serving a different role based on its compute, storage and networking capabilities.
 
-<div class="table-wrapper">
-
 | Node | Hardware | Storage | Primary Role |
 | :--- | :--- | :--- | :--- |
 | Node 1 | ASUS NUC 14 Pro Plus<br />Core Ultra 5 125H<br />64 GB DDR5-4800 | 2 TB Corsair NVMe<br />4 TB Samsung 990 Pro | Primary NAS, infrastructure services, applications and testing |
 | Node 2 | Custom PC<br />Core Ultra 7 265K<br />64 GB DDR5-6000<br />RTX 3060 12 GB | 1 TB WD Blue NVMe<br />8 TB Seagate IronWolf | AI workloads, NAS backup, Kubernetes and experimentation |
 | Node 3 | Raspberry Pi 5<br />8 GB RAM | 256 GB SATA SSD<br />1 TB + 1 TB + 2 TB HDD | Network services, VPN, reverse proxy and backup copy |
-
-</div>
 
 ## Virtual Machines & Containers
 
