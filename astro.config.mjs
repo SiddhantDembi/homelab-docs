@@ -16,6 +16,6 @@ export default defineConfig({
       hastPlugins: [responsiveTables()],
     }),
   },
-  site: 'https://docs.dembi.xyz',
+  site: 'https://siddhantdembi.com',
   integrations: [sitemap()]
 });
