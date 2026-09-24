@@ -184,8 +184,11 @@ const toc = headings.filter((heading) => heading.depth === 2);
     display: flex;
     flex-direction: column;
     gap: 10px;
+    max-height: calc(100vh - 60px);
+    overflow-y: auto;
     border-left: 1px solid var(--border);
-    padding-left: 20px;
+    padding: 0 8px 4px 20px;
+    scrollbar-width: thin;
   }
 
   .toc p {
