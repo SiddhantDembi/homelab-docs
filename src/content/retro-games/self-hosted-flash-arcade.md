@@ -1,7 +1,7 @@
 ---
 title: "My Self-Hosted Flash Arcade"
 description: "How I turned a folder of SWF games into a browser arcade with Docker, Ruffle, automatic discovery, favourites, and no database."
-order: 2
+order: 1
 tags:
   - self-hosting
   - docker

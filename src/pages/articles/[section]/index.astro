@@ -1,83 +1,17 @@
 ---
 import { getCollection } from 'astro:content';
-import Layout from '../../../layouts/Layout.astro';
-import DocCard from '../../../components/DocCard.astro';
-import {
-  getDocParts,
-  getPublishedDocs,
-  getSectionDescription,
-  getSectionTitle,
-  sortDocs,
-} from '../../../lib/docs';
+import { getDocParts, getPublishedDocs } from '../../../lib/docs';
 
 export async function getStaticPaths() {
-  const allDocs = await getCollection('docs');
-  const docs = getPublishedDocs(allDocs);
+  const docs = getPublishedDocs(await getCollection('docs'));
   const sections = [...new Set(docs.map((doc) => getDocParts(doc).section))];
 
   return sections.map((section) => ({
     params: { section },
-    props: {
-      section,
-      docs: sortDocs(docs.filter((doc) => getDocParts(doc).section === section)),
-      allDocs,
-    },
   }));
 }
 
-const { section, docs, allDocs } = Astro.props;
-const title = getSectionTitle(section, allDocs);
-const description = getSectionDescription(section, allDocs);
+const { section } = Astro.params;
+
+return Astro.redirect(`/articles/#${section}`, 301);
 ---
-
-<Layout title={`${title} — Siddhant Dembi`} description={description}>
-  <main class="page" data-pagefind-body>
-    <header class="page-header">
-      <p class="eyebrow">{title.toUpperCase()}</p>
-      <h2>{description}</h2>
-    </header>
-
-    <section>
-      {docs.map((doc, index) => <DocCard doc={doc} number={String(index + 1).padStart(2, '0')} />)}
-    </section>
-  </main>
-</Layout>
-
-<style>
-  .page {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: var(--space-9) 24px calc(var(--space-9) + var(--space-5));
-  }
-
-  .page-header {
-    max-width: 720px;
-    margin-bottom: var(--space-8);
-  }
-
-  .eyebrow {
-    margin: 0 0 18px;
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 0.12em;
-    color: var(--text-muted);
-  }
-
-  h2 {
-    margin: 0;
-    max-width: 760px;
-    font-size: clamp(2rem, 5vw, 3.5rem);
-    line-height: 1.08;
-    letter-spacing: -0.03em;
-  }
-
-  @media (max-width: 600px) {
-    .page {
-      padding: var(--space-8) 20px var(--space-9);
-    }
-
-    .page-header {
-      margin-bottom: var(--space-7);
-    }
-  }
-</style>

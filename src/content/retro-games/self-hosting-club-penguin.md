@@ -1,7 +1,7 @@
 ---
 title: "Self-Hosting Club Penguin"
 description: "That became this homelab project: a private Club Penguin server running inside its own virtual machine."
-order: 1
+order: 2
 tags:
   - Self-Hosting
   - Club Penguin

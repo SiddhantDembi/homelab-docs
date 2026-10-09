@@ -23,7 +23,7 @@ export function getDocUrl(doc: DocEntry) {
 }
 
 export function getSectionUrl(section: string) {
-  return `/articles/${section}/`;
+  return `/articles/#${section}`;
 }
 
 export function getSectionTitle(section: string, docs: DocEntry[]) {
@@ -33,6 +33,15 @@ export function getSectionTitle(section: string, docs: DocEntry[]) {
   });
 
   return titledDoc?.data.title ?? section;
+}
+
+export function getSectionOrder(section: string, docs: DocEntry[]) {
+  const titledDoc = docs.find((doc) => {
+    const parts = getDocParts(doc);
+    return parts.section === section && parts.slug === 'title';
+  });
+
+  return titledDoc?.data.order ?? Number.MAX_SAFE_INTEGER;
 }
 
 export function getSectionDescription(section: string, docs: DocEntry[]) {

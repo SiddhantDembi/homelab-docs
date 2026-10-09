@@ -17,5 +17,9 @@ export default defineConfig({
     }),
   },
   site: 'https://siddhantdembi.com',
-  integrations: [sitemap()]
+  integrations: [
+    sitemap({
+      filter: (page) => !/^\/articles\/[^/]+\/$/.test(new URL(page).pathname),
+    }),
+  ],
 });
