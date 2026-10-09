@@ -51,7 +51,7 @@ import Header from '../components/Header.astro';
         --text: #111;
         --text-soft: #4f5350;
         --text-muted: #686d69;
-        --text-faint: #8a908b;
+        --text-faint: #6f756f;
         --border: #dedfdd;
         --border-strong: #9da29e;
         --accent: #176b63;
@@ -66,6 +66,7 @@ import Header from '../components/Header.astro';
         --radius-lg: 16px;
         --page-width: 1100px;
         --content-width: 720px;
+        --header-offset: 96px;
         --space-1: 0.25rem;
         --space-2: 0.5rem;
         --space-3: 0.75rem;
@@ -86,7 +87,7 @@ import Header from '../components/Header.astro';
         --text: #f2f4f1;
         --text-soft: #c7cbc7;
         --text-muted: #a1a7a2;
-        --text-faint: #757c77;
+        --text-faint: #848b86;
         --border: #343936;
         --border-strong: #626a64;
         --accent: #7bcabb;
@@ -103,6 +104,7 @@ import Header from '../components/Header.astro';
 
       html {
         scroll-behavior: smooth;
+        scroll-padding-top: var(--header-offset);
         scrollbar-gutter: stable;
       }
 
@@ -143,6 +145,31 @@ import Header from '../components/Header.astro';
         outline-offset: 3px;
       }
 
+      .skip-link {
+        position: fixed;
+        z-index: 1000;
+        top: var(--space-3);
+        left: var(--space-3);
+        padding: 0.65rem 0.9rem;
+        border-radius: var(--radius-sm);
+        background: var(--text);
+        color: var(--background);
+        font-weight: 700;
+        text-decoration: none;
+        transform: translateY(calc(-100% - var(--space-5)));
+        transition: transform var(--transition-fast);
+      }
+
+      .skip-link:focus {
+        transform: translateY(0);
+      }
+
+      @media (max-width: 600px) {
+        :root {
+          --header-offset: 140px;
+        }
+      }
+
       @media (prefers-reduced-motion: reduce) {
         html {
           scroll-behavior: auto;
@@ -173,6 +200,7 @@ import Header from '../components/Header.astro';
   </head>
 
   <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
     <Header />
     <slot />
   </body>

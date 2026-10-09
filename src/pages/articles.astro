@@ -4,26 +4,19 @@ import Layout from '../layouts/Layout.astro';
 import DocCard from '../components/DocCard.astro';
 import {
   getPublishedDocs,
-  getSectionOrder,
   getSectionTitle,
   groupDocsBySection,
+  sortSectionIds,
 } from '../lib/docs';
 
 const allDocs = await getCollection('docs');
 const docs = getPublishedDocs(allDocs);
 const groupedDocs = groupDocsBySection(docs);
-const sections = Object.entries(groupedDocs)
-  .sort(([firstId], [secondId]) => {
-    const orderDifference = getSectionOrder(firstId, allDocs) - getSectionOrder(secondId, allDocs);
-
-    if (orderDifference !== 0) return orderDifference;
-
-    return getSectionTitle(firstId, allDocs).localeCompare(getSectionTitle(secondId, allDocs));
-  })
-  .map(([id, sectionDocs]) => ({
+const sections = sortSectionIds(Object.keys(groupedDocs), allDocs)
+  .map((id) => ({
     id,
     title: getSectionTitle(id, allDocs),
-    docs: sectionDocs.map((doc, index) => ({
+    docs: groupedDocs[id].map((doc, index) => ({
       doc,
       number: String(index + 1).padStart(2, '0'),
     })),
@@ -34,7 +27,7 @@ const sections = Object.entries(groupedDocs)
   title="Articles — Siddhant Dembi"
   description="Technical articles and documentation by Siddhant Dembi."
 >
-  <main class="page" data-pagefind-body>
+  <main id="main-content" class="page" data-pagefind-body>
     <header class="page-header">
       <h1>Articles</h1>
       <p class="page-intro">Technical notes, projects, and build logs from my homelab.</p>
@@ -92,7 +85,7 @@ const sections = Object.entries(groupedDocs)
   }
 
   .article-section {
-    scroll-margin-top: calc(72px + var(--space-5));
+    scroll-margin-top: var(--header-offset);
   }
 
   .article-section + .article-section {

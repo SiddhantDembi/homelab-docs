@@ -55,6 +55,18 @@ export function getSectionDescription(section: string, docs: DocEntry[]) {
   return describedDoc?.data.description ?? '';
 }
 
+export function sortSectionIds(sections: string[], docs: DocEntry[]) {
+  return [...sections].sort((a, b) => {
+    const orderDifference = getSectionOrder(a, docs) - getSectionOrder(b, docs);
+
+    if (orderDifference !== 0) {
+      return orderDifference;
+    }
+
+    return getSectionTitle(a, docs).localeCompare(getSectionTitle(b, docs));
+  });
+}
+
 export function getPublishedDocs(docs: DocEntry[]) {
   return docs.filter((doc) => {
     const { slug } = getDocParts(doc);

@@ -1,5 +1,5 @@
 ---
-import { Download } from '@lucide/astro';
+import { Download, ExternalLink } from '@lucide/astro';
 import Layout from '../layouts/Layout.astro';
 import resumeData from '../data/resume-links.json';
 
@@ -10,12 +10,26 @@ const resumeDownload = '/resume/SiddhantDembi.pdf';
   title="Resume — Siddhant Dembi"
   description="Resume for Siddhant Dembi, viewable directly within the site."
 >
-  <main class="resume-page" data-pagefind-body>
+  <main id="main-content" class="resume-page" data-pagefind-body>
     <section class="resume-header">
-      <h2>Resume</h2>
+      <h1>Resume</h1>
+      <p id="resume-description">
+        Preview the résumé below, or open the PDF for a full-size, selectable version.
+      </p>
     </section>
 
-    <section id="resume-viewer" class="resume-viewer">
+    <div class="resume-actions">
+      <a class="open-button" href={resumeDownload} target="_blank" rel="noreferrer" type="application/pdf">
+        <ExternalLink size={18} stroke-width={1.8} aria-hidden="true" />
+        Open PDF
+      </a>
+      <a class="download-button" href={resumeDownload} download="SiddhantDembi.pdf" type="application/pdf">
+        <Download size={18} stroke-width={1.8} aria-hidden="true" />
+        Download PDF
+      </a>
+    </div>
+
+    <section id="resume-viewer" class="resume-viewer" aria-describedby="resume-description">
       {resumeData.pages.map((page, pageIndex) => (
         <div class="resume-preview" style={`aspect-ratio: ${page.width} / ${page.height};`}>
           <img src={page.image} alt={`Siddhant Dembi resume, page ${pageIndex + 1}`} />
@@ -33,28 +47,26 @@ const resumeDownload = '/resume/SiddhantDembi.pdf';
       ))}
     </section>
 
-    <div class="resume-actions">
-      <a class="download-button" href={resumeDownload} download="SiddhantDembi.pdf" type="application/pdf">
-        <Download size={18} stroke-width={1.8} aria-hidden="true" />
-        Download PDF
-      </a>
-    </div>
   </main>
 </Layout>
 
 <style>
   .resume-page { max-width: var(--page-width); margin: 0 auto; padding: var(--space-8) 24px var(--space-8); }
-  .resume-header { margin-bottom: var(--space-7); }
+  .resume-header { max-width: 720px; margin-bottom: var(--space-7); }
   .eyebrow { margin: 0 0 14px; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em; color: var(--text-muted); }
-  h2 { margin: 0; font-size: clamp(2.7rem, 6vw, 4.75rem); line-height: 1; letter-spacing: -0.035em; }
+  h1 { margin: 0; font-size: clamp(2.7rem, 6vw, 4.75rem); line-height: 1; letter-spacing: -0.035em; }
+  .resume-header p { margin: var(--space-5) 0 0; color: var(--text-muted); font-size: 1.05rem; line-height: 1.7; }
   .resume-viewer { display: grid; gap: var(--space-5); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: var(--space-5); background: var(--surface); box-shadow: var(--shadow-sm); }
   .resume-preview { position: relative; width: 100%; overflow: hidden; border-radius: var(--radius-sm); background: white; }
   .resume-preview img { display: block; width: 100%; height: 100%; object-fit: contain; }
   .resume-link { position: absolute; display: block; cursor: pointer; }
   .resume-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; background: color-mix(in srgb, var(--accent) 20%, transparent); }
-  .resume-actions { display: flex; justify-content: center; margin-top: 24px; padding-bottom: 12px; }
-  .download-button { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 22px; gap: 9px; border: 1px solid var(--text); border-radius: var(--radius-sm); background: var(--text); color: var(--button-text); font-size: 0.95rem; font-weight: 600; text-decoration: none; transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), transform var(--transition-fast); }
-  .download-button:hover { border-color: var(--accent); background: var(--accent); color: var(--background); transform: translateY(-1px); }
-  .download-button:active { transform: translateY(0); }
-  @media (max-width: 800px) { .resume-page { padding: var(--space-8) 20px var(--space-6); } .resume-viewer { gap: var(--space-2); padding: var(--space-2); border-radius: var(--radius-md); } .resume-actions { margin-top: var(--space-5); padding-bottom: 0; } .download-button { width: 100%; min-height: 48px; } }
+  .resume-actions { display: flex; justify-content: flex-start; gap: 12px; margin-bottom: 24px; }
+  .resume-actions a { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 0 22px; gap: 9px; border: 1px solid var(--text); border-radius: var(--radius-sm); font-size: 0.95rem; font-weight: 600; text-decoration: none; transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), transform var(--transition-fast); }
+  .open-button { background: var(--background); color: var(--text); }
+  .download-button { background: var(--text); color: var(--button-text); }
+  .resume-actions a:hover { border-color: var(--accent); background: var(--accent); color: var(--background); transform: translateY(-1px); }
+  .resume-actions a:active { transform: translateY(0); }
+  @media (max-width: 800px) { .resume-page { padding: var(--space-8) 20px var(--space-6); } .resume-viewer { gap: var(--space-2); padding: var(--space-2); border-radius: var(--radius-md); } }
+  @media (max-width: 480px) { .resume-actions { flex-direction: column; } .resume-actions a { width: 100%; min-height: 48px; } }
 </style>

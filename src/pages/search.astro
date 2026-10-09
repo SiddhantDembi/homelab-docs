@@ -28,7 +28,7 @@ const fallbackResults = sortDocs(getPublishedDocs(allDocs)).map((doc) => {
   title="Search — Siddhant Dembi"
   description="Search Siddhant Dembi's technical articles and homelab documentation."
 >
-  <main class="search-page" data-pagefind-ignore>
+  <main id="main-content" class="search-page" data-pagefind-ignore>
     <header class="search-header">
       <p class="eyebrow">SEARCH</p>
       <h1>Find an article</h1>
@@ -91,7 +91,7 @@ const fallbackResults = sortDocs(getPublishedDocs(allDocs)).map((doc) => {
 
     const summary = document.createElement('span');
     summary.className = 'result-excerpt';
-    summary.innerHTML = excerpt;
+    summary.textContent = excerpt;
 
     link.append(meta, heading, summary);
     return link;
@@ -134,18 +134,22 @@ const fallbackResults = sortDocs(getPublishedDocs(allDocs)).map((doc) => {
       const search = await pagefind.search(query);
       const loadedResults = await Promise.all(search.results.slice(0, 20).map((result) => result.data()));
 
-      results = loadedResults.map((result) => {
-        const article = fallbackResults.find(
-          (fallbackResult) => cleanUrl(fallbackResult.url) === cleanUrl(result.url),
-        );
+      results = loadedResults
+        .map((result) => {
+          const article = fallbackResults.find(
+            (fallbackResult) => cleanUrl(fallbackResult.url) === cleanUrl(result.url),
+          );
 
-        return {
-          url: result.url,
-          title: article?.title ?? result.meta.title.replace(/ — Siddhant Dembi$/, ''),
-          excerpt: result.excerpt,
-          section: article?.section ?? 'Page',
-        };
-      });
+          if (!article) return null;
+
+          return {
+            url: article.url,
+            title: article.title,
+            excerpt: article.description,
+            section: article.section,
+          };
+        })
+        .filter(Boolean);
     } else {
       results = searchFallback(query);
     }

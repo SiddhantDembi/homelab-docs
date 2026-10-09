@@ -1,4 +1,5 @@
 ---
+import { ArrowRight } from '@lucide/astro';
 import Layout from '../layouts/Layout.astro';
 ---
 
@@ -6,7 +7,7 @@ import Layout from '../layouts/Layout.astro';
   title="Siddhant Dembi — Homelab"
   description="Technical write-ups covering my homelab infrastructure, local AI systems, automation, networking, monitoring and backups."
 >
-  <main data-pagefind-body>
+  <main id="main-content" data-pagefind-body>
     <section class="hero">
       <h1>Siddhant Dembi</h1>
 
@@ -14,6 +15,11 @@ import Layout from '../layouts/Layout.astro';
         Tech enthusiast documenting my journey through DevOps, infrastructure,
         local AI, automation and homelabing.
       </p>
+
+      <a class="articles-link" href="/articles/">
+        Browse articles
+        <ArrowRight size={18} stroke-width={1.8} aria-hidden="true" />
+      </a>
     </section>
   </main>
 </Layout>
@@ -47,6 +53,34 @@ import Layout from '../layouts/Layout.astro';
     font-size: clamp(1.1rem, 2vw, 1.3rem);
     line-height: 1.7;
     color: var(--text-soft);
+  }
+
+  .articles-link {
+    display: inline-flex;
+    min-height: 46px;
+    align-items: center;
+    gap: 10px;
+    margin-top: var(--space-6);
+    padding: 0 18px;
+    border: 1px solid var(--text);
+    border-radius: var(--radius-sm);
+    background: var(--text);
+    color: var(--button-text);
+    font-size: 0.94rem;
+    font-weight: 700;
+    text-decoration: none;
+    transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast), transform var(--transition-fast);
+  }
+
+  .articles-link:hover {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: var(--background);
+    transform: translateY(-1px);
+  }
+
+  .articles-link:active {
+    transform: translateY(0);
   }
 
   @keyframes hero-in {

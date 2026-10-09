@@ -1,6 +1,12 @@
 ---
+import { ArrowLeft, ArrowRight, ChevronDown, X } from '@lucide/astro';
 import Layout from './Layout.astro';
 import type { MarkdownHeading } from 'astro';
+
+interface ArticleLink {
+  title: string;
+  url: string;
+}
 
 interface Props {
   title: string;
@@ -8,14 +14,28 @@ interface Props {
   eyebrow?: string;
   tags?: string[];
   headings?: MarkdownHeading[];
+  sectionTitle: string;
+  sectionUrl: string;
+  previous?: ArticleLink;
+  next?: ArticleLink;
 }
 
-const { title, description, eyebrow = 'DOCS', tags = [], headings = [] } = Astro.props;
+const {
+  title,
+  description,
+  eyebrow = 'DOCS',
+  tags = [],
+  headings = [],
+  sectionTitle,
+  sectionUrl,
+  previous,
+  next,
+} = Astro.props;
 const toc = headings.filter((heading) => heading.depth === 2);
 ---
 
 <Layout title={`${title} — Siddhant Dembi`} description={description}>
-  <main class="article" data-pagefind-body>
+  <main id="main-content" class="article" data-pagefind-body>
     <header class="article-header">
       <p class="eyebrow">{eyebrow}</p>
       <h1>{title}</h1>
@@ -26,6 +46,18 @@ const toc = headings.filter((heading) => heading.depth === 2);
           {tags.map((tag) => <span>{tag}</span>)}
         </div>
       )}
+
+      {toc.length > 0 && (
+        <details class="mobile-toc">
+          <summary>
+            On this page
+            <ChevronDown size={17} stroke-width={1.8} aria-hidden="true" />
+          </summary>
+          <nav aria-label="On this page">
+            {toc.map((heading) => <a href={`#${heading.slug}`}>{heading.text}</a>)}
+          </nav>
+        </details>
+      )}
     </header>
 
     <div class="article-layout">
@@ -35,13 +67,152 @@ const toc = headings.filter((heading) => heading.depth === 2);
 
       {toc.length > 0 && (
         <aside class="toc">
-          <p>ON THIS PAGE</p>
-          {toc.map((heading) => <a href={`#${heading.slug}`}>{heading.text}</a>)}
+          <nav aria-label="On this page">
+            <p>ON THIS PAGE</p>
+            {toc.map((heading) => <a href={`#${heading.slug}`}>{heading.text}</a>)}
+          </nav>
         </aside>
       )}
     </div>
+
+    <nav class="article-navigation" aria-label="Article navigation">
+      <a class="section-return" href={sectionUrl}>
+        <ArrowLeft size={17} stroke-width={1.8} aria-hidden="true" />
+        All {sectionTitle} articles
+      </a>
+
+      {(previous || next) && (
+        <div class="article-pagination">
+          {previous && (
+            <a class="previous-article" href={previous.url}>
+              <span>Previous</span>
+              <strong>{previous.title}</strong>
+            </a>
+          )}
+          {next && (
+            <a class="next-article" href={next.url}>
+              <span>Next</span>
+              <strong>{next.title}</strong>
+              <ArrowRight size={18} stroke-width={1.8} aria-hidden="true" />
+            </a>
+          )}
+        </div>
+      )}
+    </nav>
   </main>
+
+  <dialog class="image-lightbox" aria-label="Expanded article image">
+    <div class="lightbox-panel">
+      <button class="lightbox-close" type="button" aria-label="Close image preview">
+        <X size={21} stroke-width={1.8} aria-hidden="true" />
+      </button>
+      <img src="" alt="" />
+      <p class="lightbox-caption"></p>
+    </div>
+  </dialog>
 </Layout>
+
+<script>
+  const copyText = async (text: string) => {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      return;
+    }
+
+    const textarea = document.createElement('textarea');
+    textarea.value = text;
+    textarea.setAttribute('readonly', '');
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.append(textarea);
+    textarea.select();
+    const copied = document.execCommand('copy');
+    textarea.remove();
+
+    if (!copied) throw new Error('Copy failed');
+  };
+
+  const setupArticleTools = () => {
+    const dialog = document.querySelector<HTMLDialogElement>('.image-lightbox');
+    const dialogImage = dialog?.querySelector<HTMLImageElement>('img');
+    const dialogCaption = dialog?.querySelector<HTMLElement>('.lightbox-caption');
+    const closeButton = dialog?.querySelector<HTMLButtonElement>('.lightbox-close');
+
+    document.querySelectorAll<HTMLImageElement>('.article-figure img').forEach((image) => {
+      if (image.dataset.zoomReady || image.closest('a')) return;
+
+      image.dataset.zoomReady = 'true';
+      image.classList.add('is-zoomable');
+      image.tabIndex = 0;
+      image.setAttribute('role', 'button');
+      image.setAttribute('aria-label', `${image.alt || 'Article image'}. Open full-size image.`);
+
+      const openImage = () => {
+        if (!dialog || !dialogImage || !dialogCaption) return;
+
+        const caption = image.closest('figure')?.querySelector('figcaption')?.textContent?.trim() ?? '';
+        dialogImage.src = image.currentSrc || image.src;
+        dialogImage.alt = image.alt;
+        dialogCaption.textContent = caption;
+        dialogCaption.hidden = caption.length === 0;
+        dialog.showModal();
+      };
+
+      image.addEventListener('click', openImage);
+      image.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          openImage();
+        }
+      });
+    });
+
+    if (dialog && !dialog.dataset.ready) {
+      dialog.dataset.ready = 'true';
+      closeButton?.addEventListener('click', () => dialog.close());
+      dialog.addEventListener('click', (event) => {
+        if (event.target === dialog) dialog.close();
+      });
+    }
+
+    document.querySelectorAll<HTMLPreElement>('.content pre').forEach((pre) => {
+      if (pre.parentElement?.classList.contains('code-block')) return;
+
+      const wrapper = document.createElement('div');
+      wrapper.className = 'code-block';
+
+      const toolbar = document.createElement('div');
+      toolbar.className = 'code-toolbar';
+
+      const language = document.createElement('span');
+      language.textContent = pre.dataset.language || 'code';
+
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'copy-code';
+      button.textContent = 'Copy';
+      button.setAttribute('aria-label', 'Copy code to clipboard');
+
+      pre.parentElement?.insertBefore(wrapper, pre);
+      toolbar.append(language, button);
+      wrapper.append(toolbar, pre);
+
+      button.addEventListener('click', async () => {
+        try {
+          await copyText(pre.textContent ?? '');
+          button.textContent = 'Copied';
+          window.setTimeout(() => {
+            button.textContent = 'Copy';
+          }, 1600);
+        } catch {
+          button.textContent = 'Try again';
+        }
+      });
+    });
+  };
+
+  setupArticleTools();
+</script>
 
 <style is:global>
   .article {
@@ -115,7 +286,7 @@ const toc = headings.filter((heading) => heading.depth === 2);
     margin: 64px 0 20px;
     font-size: 1.8rem;
     letter-spacing: 0;
-    scroll-margin-top: 30px;
+    scroll-margin-top: var(--header-offset);
   }
 
   .content h2:first-child {
@@ -125,6 +296,7 @@ const toc = headings.filter((heading) => heading.depth === 2);
   .content h3 {
     margin: 32px 0 14px;
     font-size: 1.2rem;
+    scroll-margin-top: var(--header-offset);
   }
 
   .content p,
@@ -171,6 +343,15 @@ const toc = headings.filter((heading) => heading.depth === 2);
     background: var(--surface);
   }
 
+  .article-figure img.is-zoomable {
+    cursor: zoom-in;
+  }
+
+  .article-figure img.is-zoomable:focus-visible {
+    outline: 3px solid var(--accent);
+    outline-offset: 4px;
+  }
+
   .article-figure figcaption {
     margin: 10px 4px 0;
     color: var(--text-muted);
@@ -180,15 +361,18 @@ const toc = headings.filter((heading) => heading.depth === 2);
 
   .toc {
     position: sticky;
-    top: 30px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    max-height: calc(100vh - 60px);
+    top: var(--header-offset);
+    max-height: calc(100vh - var(--header-offset) - var(--space-5));
     overflow-y: auto;
     border-left: 1px solid var(--border);
     padding: 0 8px 4px 20px;
     scrollbar-width: thin;
+  }
+
+  .toc nav {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
   }
 
   .toc p {
@@ -210,6 +394,196 @@ const toc = headings.filter((heading) => heading.depth === 2);
   .toc a:hover {
     color: var(--text);
     transform: translateX(3px);
+  }
+
+  .mobile-toc {
+    display: none;
+  }
+
+  .code-block {
+    margin: 28px 0;
+    overflow: hidden;
+    border: 1px solid #343a40;
+    border-radius: var(--radius-md);
+    background: #24292e;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .code-toolbar {
+    display: flex;
+    min-height: 42px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 12px 0 16px;
+    border-bottom: 1px solid #3c434a;
+    color: #b8c0c7;
+    background: #1f2428;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .copy-code {
+    min-width: 64px;
+    min-height: 30px;
+    padding: 0 10px;
+    border: 1px solid #535c64;
+    border-radius: 5px;
+    color: #e1e4e8;
+    background: transparent;
+    cursor: pointer;
+    font-size: 0.72rem;
+    text-transform: none;
+    transition: border-color var(--transition-fast), background-color var(--transition-fast);
+  }
+
+  .copy-code:hover {
+    border-color: #8d99a3;
+    background: #30363c;
+  }
+
+  .code-block pre {
+    margin: 0 !important;
+    padding: 20px;
+    border-radius: 0 0 var(--radius-md) var(--radius-md);
+    font-size: 0.82rem;
+    line-height: 1.65;
+  }
+
+  .article-navigation {
+    max-width: 700px;
+    margin-top: var(--space-9);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--border);
+  }
+
+  .section-return {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-muted);
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .section-return:hover {
+    color: var(--accent-strong);
+  }
+
+  .article-pagination {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-4);
+    margin-top: var(--space-5);
+  }
+
+  .article-pagination a {
+    position: relative;
+    display: flex;
+    min-height: 118px;
+    flex-direction: column;
+    justify-content: center;
+    gap: 7px;
+    padding: 18px 20px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    background: var(--surface);
+    text-decoration: none;
+    transition: border-color var(--transition-fast), background-color var(--transition-fast), transform var(--transition-fast);
+  }
+
+  .article-pagination a:hover {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+    transform: translateY(-2px);
+  }
+
+  .article-pagination span {
+    color: var(--text-faint);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .article-pagination strong {
+    padding-right: 26px;
+    font-size: 0.95rem;
+    line-height: 1.4;
+  }
+
+  .next-article {
+    grid-column: 2;
+    text-align: right;
+  }
+
+  .next-article svg {
+    position: absolute;
+    right: 18px;
+    bottom: 18px;
+  }
+
+  .image-lightbox {
+    width: min(94vw, 1400px);
+    max-width: none;
+    max-height: 94vh;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    overflow: visible;
+  }
+
+  .image-lightbox::backdrop {
+    background: rgb(5 8 7 / 0.88);
+    backdrop-filter: blur(5px);
+  }
+
+  .lightbox-panel {
+    position: relative;
+    display: flex;
+    max-height: 94vh;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .lightbox-panel img {
+    display: block;
+    max-width: 100%;
+    max-height: calc(94vh - 52px);
+    border-radius: var(--radius-md);
+    background: #fff;
+    box-shadow: var(--shadow-md);
+    object-fit: contain;
+  }
+
+  .lightbox-caption {
+    max-width: 760px;
+    margin: 0;
+    padding: 6px 12px;
+    color: #f2f4f1;
+    font-size: 0.85rem;
+    line-height: 1.5;
+    text-align: center;
+  }
+
+  .lightbox-close {
+    position: absolute;
+    z-index: 1;
+    top: 10px;
+    right: 10px;
+    display: grid;
+    width: 42px;
+    height: 42px;
+    place-items: center;
+    padding: 0;
+    border: 1px solid rgb(255 255 255 / 0.38);
+    border-radius: 50%;
+    background: rgb(17 19 18 / 0.78);
+    color: #fff;
+    cursor: pointer;
   }
 
   .table-wrapper {
@@ -473,6 +847,54 @@ const toc = headings.filter((heading) => heading.depth === 2);
       display: none;
     }
 
+    .mobile-toc {
+      display: block;
+      margin-top: var(--space-6);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      background: var(--surface);
+    }
+
+    .mobile-toc summary {
+      display: flex;
+      min-height: 48px;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-4);
+      cursor: pointer;
+      font-size: 0.86rem;
+      font-weight: 700;
+      list-style: none;
+    }
+
+    .mobile-toc summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .mobile-toc summary svg {
+      transition: transform var(--transition-fast);
+    }
+
+    .mobile-toc[open] summary svg {
+      transform: rotate(180deg);
+    }
+
+    .mobile-toc nav {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      padding: 4px var(--space-4) var(--space-4);
+      border-top: 1px solid var(--border);
+    }
+
+    .mobile-toc a {
+      padding: 9px 0;
+      color: var(--text-muted);
+      font-size: 0.86rem;
+      line-height: 1.4;
+      text-decoration: none;
+    }
+
     .article-header {
       margin-bottom: var(--space-8);
     }
@@ -509,6 +931,26 @@ const toc = headings.filter((heading) => heading.depth === 2);
     .templates-note {
       flex-direction: column;
       gap: 5px;
+    }
+
+    .article-navigation {
+      margin-top: var(--space-8);
+    }
+
+    .article-pagination {
+      grid-template-columns: 1fr;
+    }
+
+    .article-pagination a,
+    .next-article {
+      grid-column: 1;
+      min-height: 104px;
+      text-align: left;
+    }
+
+    .code-block pre {
+      padding: 16px;
+      font-size: 0.76rem;
     }
   }
 </style>

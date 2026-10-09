@@ -1,32 +1,53 @@
 ---
 import { getCollection, render } from 'astro:content';
 import DocLayout from '../../../layouts/DocLayout.astro';
-import { getDocParts, getPublishedDocs, getSectionTitle } from '../../../lib/docs';
+import {
+  getDocParts,
+  getDocUrl,
+  getPublishedDocs,
+  getSectionTitle,
+  getSectionUrl,
+  sortDocs,
+} from '../../../lib/docs';
 
 export async function getStaticPaths() {
-  const docs = getPublishedDocs(await getCollection('docs'));
+  const allDocs = await getCollection('docs');
+  const docs = getPublishedDocs(allDocs);
 
   return docs.map((doc) => {
     const { section, slug } = getDocParts(doc);
 
     return {
       params: { section, slug },
-      props: { doc, docs },
+      props: { doc, docs, allDocs },
     };
   });
 }
 
-const { doc, docs } = Astro.props;
+const { doc, docs, allDocs } = Astro.props;
 const { section } = getDocParts(doc);
+const sectionTitle = getSectionTitle(section, allDocs);
+const sectionDocs = sortDocs(
+  docs.filter((candidate) => getDocParts(candidate).section === section),
+);
+const articleIndex = sectionDocs.findIndex((candidate) => candidate.id === doc.id);
+const previousDoc = articleIndex > 0 ? sectionDocs[articleIndex - 1] : undefined;
+const nextDoc = articleIndex >= 0 && articleIndex < sectionDocs.length - 1
+  ? sectionDocs[articleIndex + 1]
+  : undefined;
 const { Content, headings } = await render(doc);
 ---
 
 <DocLayout
   title={doc.data.title}
   description={doc.data.description}
-  eyebrow={`${getSectionTitle(section, docs).toUpperCase()} / ${String(doc.data.order).padStart(2, '0')}`}
+  eyebrow={`${sectionTitle.toUpperCase()} / ${String(doc.data.order).padStart(2, '0')}`}
   tags={doc.data.tags}
   headings={headings}
+  sectionTitle={sectionTitle}
+  sectionUrl={getSectionUrl(section)}
+  previous={previousDoc ? { title: previousDoc.data.title, url: getDocUrl(previousDoc) } : undefined}
+  next={nextDoc ? { title: nextDoc.data.title, url: getDocUrl(nextDoc) } : undefined}
 >
   <Content />
 </DocLayout>

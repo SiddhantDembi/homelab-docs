@@ -2,10 +2,19 @@
 import { getCollection } from 'astro:content';
 import { House, Server } from '@lucide/astro';
 import Layout from '../layouts/Layout.astro';
-import { getPublishedDocs, getSectionTitle, getSectionUrl, groupDocsBySection } from '../lib/docs';
+import {
+  getPublishedDocs,
+  getSectionTitle,
+  getSectionUrl,
+  groupDocsBySection,
+  sortSectionIds,
+} from '../lib/docs';
 
 const allDocs = await getCollection('docs');
-const sections = Object.keys(groupDocsBySection(getPublishedDocs(allDocs)));
+const sections = sortSectionIds(
+  Object.keys(groupDocsBySection(getPublishedDocs(allDocs))),
+  allDocs,
+);
 const primarySection = sections[0];
 ---
 
@@ -13,7 +22,7 @@ const primarySection = sections[0];
   title="Page not found — Siddhant Dembi"
   description="The requested page could not be found."
 >
-  <main class="not-found" data-pagefind-ignore>
+  <main id="main-content" class="not-found" data-pagefind-ignore>
     <p class="eyebrow">404</p>
     <h1>This page isn't here.</h1>
     <p class="message">The link may be outdated, or the page may have moved.</p>
