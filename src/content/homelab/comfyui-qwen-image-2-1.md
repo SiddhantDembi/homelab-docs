@@ -1,5 +1,5 @@
 ---
-title: "Building a Local Image Generator with ComfyUI and Qwen-Image-2.1"
+title: "Local Image Generator with ComfyUI and Qwen-Image-2.1"
 description: "How I built a GPU-accelerated image-generation service with ComfyUI, Qwen-Image-2.1 and an RTX 3060 in my homelab."
 order: 6
 tags:
